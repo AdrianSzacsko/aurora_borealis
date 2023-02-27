@@ -1,24 +1,27 @@
 import 'package:flutter/material.dart';
 import '../Components/custom_form_field.dart';
 import '../Components/ext_string.dart';
-import 'register_screen.dart';
+import 'login_screen.dart';
 import '../Components/app_bar.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({Key? key}) : super(key: key);
 
   @override
-  LoginScreenState createState() => LoginScreenState();
+  RegisterScreenState createState() => RegisterScreenState();
 }
 
-class LoginScreenState extends State<LoginScreen> {
+class RegisterScreenState extends State<RegisterScreen> {
   final emailController = TextEditingController();
+  final firstNameController = TextEditingController();
+  final lastNameController = TextEditingController();
   final passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: myAppBar(context),
       body: Stack(
         fit: StackFit.expand,
@@ -47,7 +50,7 @@ class LoginScreenState extends State<LoginScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text(
-                          'Sign In',
+                          'Sign Up',
                           style: TextStyle(
                               fontSize: 28
                           ),
@@ -70,6 +73,32 @@ class LoginScreenState extends State<LoginScreen> {
                                     }
                                   },
                                   prefixIcon: Icons.email_outlined,
+                                  isPassword: false),
+                              CustomFormField(
+                                  controller: firstNameController,
+                                  hintText: 'Enter First Name',
+                                  labelText: 'First Name',
+                                  validator: (value) {
+                                    if (value!.isValidName && value.isNotEmpty) {
+                                      return null;
+                                    } else {
+                                      return 'Enter valid First Name';
+                                    }
+                                  },
+                                  prefixIcon: Icons.person,
+                                  isPassword: false),
+                              CustomFormField(
+                                  controller: lastNameController,
+                                  hintText: 'Enter Last Name',
+                                  labelText: 'Last Name',
+                                  validator: (value) {
+                                    if (value!.isValidName && value.isNotEmpty) {
+                                      return null;
+                                    } else {
+                                      return 'Enter valid Last Name';
+                                    }
+                                  },
+                                  prefixIcon: Icons.person,
                                   isPassword: false),
                               CustomFormField(
                                   controller: passwordController,
@@ -108,7 +137,7 @@ class LoginScreenState extends State<LoginScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               const Text(
-                                'Don\'t have an Account?',
+                                'Already have an Account?',
                                 style: TextStyle(
                                     fontSize: 14
                                 ),
@@ -118,9 +147,9 @@ class LoginScreenState extends State<LoginScreen> {
                                       textStyle: const TextStyle(
                                           fontSize: 14
                                       )),
-                                  onPressed:  () {Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterScreen()));},
+                                  onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()));},
                                   child: const Text(
-                                    'Sign Up',
+                                    'Sign In',
                                     style: TextStyle(
                                         fontSize: 14
                                     ),
