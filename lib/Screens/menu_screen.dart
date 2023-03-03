@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../Components/custom_form_field.dart';
 import '../Components/ext_string.dart';
 import 'register_screen.dart';
+import 'login_screen.dart';
+import 'weather_main_screen.dart';
 import '../Components/app_bar.dart';
 
 class MenuScreen extends StatefulWidget {
@@ -44,12 +46,12 @@ class MenuScreenState extends State<MenuScreen> {
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        menuTile(context, "Sign In"),
-                        menuTile(context, "Sign Up"),
-                        menuTile(context, "Weather"),
-                        menuTile(context, "Feed"),
-                        menuTile(context, "Profile"),
-                        menuTile(context, "Settings"),
+                        menuTile(context, 'Sign In', () => Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()))),
+                        menuTile(context, "Sign Up", () => Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterScreen()))),
+                        menuTile(context, "Weather", () => Navigator.push(context, MaterialPageRoute(builder: (context) => const WeatherMainScreen()))),
+                        menuTile(context, "Feed", () => Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()))),
+                        menuTile(context, "Profile", () => Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()))),
+                        menuTile(context, "Settings", () => Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()))),
                       ],
                     ),
                   ),
@@ -61,7 +63,7 @@ class MenuScreenState extends State<MenuScreen> {
     );
   }
 
-  Widget menuTile(BuildContext context, String text){
+  Widget menuTile(BuildContext context, String text, Function newScreen){
     return Card(
       clipBehavior: Clip.hardEdge,
       elevation: 0,
@@ -74,7 +76,7 @@ class MenuScreenState extends State<MenuScreen> {
       child: InkWell(
         splashColor: primaryColor,
         onTap: () {
-          /*here will be the navigator to the other screens*/
+          newScreen();
         },
         child: SizedBox(
           width: double.infinity,

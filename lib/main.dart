@@ -28,10 +28,7 @@ class _MyAppState extends State<MyApp> {
             textTheme: GoogleFonts.robotoTextTheme(
               Theme.of(context).textTheme,)
         ),
-        home: LoginScreen(),
-        routes: {
-
-        },
+        home: const LoginScreen(),
       );
   }
 }
