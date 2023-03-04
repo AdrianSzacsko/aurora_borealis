@@ -25,8 +25,11 @@ class WeatherVariables{
   String weather_main;
   String weather_icon;
   double main_temp;
+  double main_temp_max;
+  double main_temp_min;
   double main_feels_like;
   int main_pressure;
+  int main_humidity;
   int main_sea_level;
   int main_grnd_level;
   int visibility;
@@ -42,8 +45,11 @@ class WeatherVariables{
       this.weather_main,
       this.weather_icon,
       this.main_temp,
+      this.main_temp_max,
+      this.main_temp_min,
       this.main_feels_like,
       this.main_pressure,
+      this.main_humidity,
       this.main_sea_level,
       this.main_grnd_level,
       this.visibility,
