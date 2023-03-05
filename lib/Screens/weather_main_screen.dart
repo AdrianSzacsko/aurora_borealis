@@ -62,7 +62,7 @@ class WeatherMainScreenState extends State<WeatherMainScreen> {
       alignment: Alignment.bottomCenter,
       child: Container(
           width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 0.7,
+          height: MediaQuery.of(context).size.height * 0.55,
           decoration: BoxDecoration(
               color: Colors.white,
               border: Border.all(
@@ -203,21 +203,21 @@ class WeatherMainScreenState extends State<WeatherMainScreen> {
   Widget advancedStats(WeatherVariables weatherVariables){
 
     Map<String, String> weatherStats = {
-      'Temperature': weatherVariables.main_temp.toString(),
-      'Min. Temperature': weatherVariables.main_temp_min.toString(),
-      'Max. Temperature': weatherVariables.main_temp_max.toString(),
-      'Feels like': weatherVariables.main_feels_like.toString(),
-      'Pressure': weatherVariables.main_pressure.toString(),
-      'Sea level': weatherVariables.main_sea_level.toString(),
-      'Ground level': weatherVariables.main_grnd_level.toString(),
-      'Humidity': weatherVariables.main_humidity.toString(),
-      'Visibility': weatherVariables.visibility.toString(),
-      'Wind Speed': weatherVariables.wind_speed.toString(),
-      'Wind Gust': weatherVariables.wind_gust.toString(),
-      'Wind Degrees': weatherVariables.wind_deg.toString(),
-      'Clouds': weatherVariables.clouds_all.toString(),
-      'Rain': weatherVariables.rain_1h.toString(),
-      'Snow': weatherVariables.snow_1h.toString(),
+      'Temperature': weatherVariables.main_temp.toString() + ' °C',
+      'Min. Temperature': weatherVariables.main_temp_min.toString() + ' °C',
+      'Max. Temperature': weatherVariables.main_temp_max.toString() + ' °C',
+      'Feels like': weatherVariables.main_feels_like.toString() + ' °C',
+      'Pressure': weatherVariables.main_pressure.toString() + ' hPa',
+      'Sea level': weatherVariables.main_sea_level.toString() + ' hPa',
+      'Ground level': weatherVariables.main_grnd_level.toString() + ' hPa',
+      'Humidity': weatherVariables.main_humidity.toString() + ' %',
+      'Visibility': weatherVariables.visibility.toString() + ' m',
+      'Wind Speed': weatherVariables.wind_speed.toString() + ' m/s',
+      'Wind Gust': weatherVariables.wind_gust.toString() + ' m/s',
+      'Wind Degrees': weatherVariables.wind_deg.toString() + ' °',
+      'Clouds': weatherVariables.clouds_all.toString() + ' %',
+      'Rain': weatherVariables.rain_1h.toString() + ' mm',
+      'Snow': weatherVariables.snow_1h.toString() + ' mm',
     };
 
     List<MapEntry<String, String>> weatherStatsEntries = weatherStats.entries.toList();
