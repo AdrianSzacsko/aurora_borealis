@@ -30,6 +30,8 @@ WeatherVariables _$WeatherVariablesFromJson(Map<String, dynamic> json) =>
     WeatherVariables(
       json['weather_main'] as String,
       json['weather_icon'] as String,
+      json['weather_description'] as String,
+      json['weather_id'] as int,
       (json['main_temp'] as num).toDouble(),
       (json['main_temp_max'] as num).toDouble(),
       (json['main_temp_min'] as num).toDouble(),
@@ -52,6 +54,8 @@ Map<String, dynamic> _$WeatherVariablesToJson(WeatherVariables instance) =>
     <String, dynamic>{
       'weather_main': instance.weather_main,
       'weather_icon': instance.weather_icon,
+      'weather_description': instance.weather_description,
+      'weather_id': instance.weather_id,
       'main_temp': instance.main_temp,
       'main_temp_max': instance.main_temp_max,
       'main_temp_min': instance.main_temp_min,
@@ -67,5 +71,61 @@ Map<String, dynamic> _$WeatherVariablesToJson(WeatherVariables instance) =>
       'clouds_all': instance.clouds_all,
       'rain_1h': instance.rain_1h,
       'snow_1h': instance.snow_1h,
+      'pop': instance.pop,
+    };
+
+WeatherVariablesDaily _$WeatherVariablesDailyFromJson(
+        Map<String, dynamic> json) =>
+    WeatherVariablesDaily(
+      (json['temp_day'] as num).toDouble(),
+      (json['temp_min'] as num).toDouble(),
+      (json['temp_max'] as num).toDouble(),
+      (json['temp_night'] as num).toDouble(),
+      (json['temp_eve'] as num).toDouble(),
+      (json['temp_morn'] as num).toDouble(),
+      (json['feels_like_day'] as num).toDouble(),
+      (json['feels_like_night'] as num).toDouble(),
+      (json['feels_like_eve'] as num).toDouble(),
+      (json['feels_like_morn'] as num).toDouble(),
+      json['pressure'] as int,
+      json['humidity'] as int,
+      json['weather_main'] as String,
+      json['weather_icon'] as String,
+      json['weather_description'] as String,
+      json['weather_id'] as int,
+      (json['wind_speed'] as num).toDouble(),
+      json['wind_deg'] as int,
+      (json['wind_gust'] as num).toDouble(),
+      (json['clouds'] as num).toDouble(),
+      (json['rain'] as num).toDouble(),
+      (json['snow'] as num).toDouble(),
+      (json['pop'] as num).toDouble(),
+    );
+
+Map<String, dynamic> _$WeatherVariablesDailyToJson(
+        WeatherVariablesDaily instance) =>
+    <String, dynamic>{
+      'temp_day': instance.temp_day,
+      'temp_min': instance.temp_min,
+      'temp_max': instance.temp_max,
+      'temp_night': instance.temp_night,
+      'temp_eve': instance.temp_eve,
+      'temp_morn': instance.temp_morn,
+      'feels_like_day': instance.feels_like_day,
+      'feels_like_night': instance.feels_like_night,
+      'feels_like_eve': instance.feels_like_eve,
+      'feels_like_morn': instance.feels_like_morn,
+      'pressure': instance.pressure,
+      'humidity': instance.humidity,
+      'weather_main': instance.weather_main,
+      'weather_icon': instance.weather_icon,
+      'weather_description': instance.weather_description,
+      'weather_id': instance.weather_id,
+      'wind_speed': instance.wind_speed,
+      'wind_deg': instance.wind_deg,
+      'wind_gust': instance.wind_gust,
+      'clouds': instance.clouds,
+      'rain': instance.rain,
+      'snow': instance.snow,
       'pop': instance.pop,
     };

@@ -47,4 +47,26 @@ class WeatherNetwork with ChangeNotifier {
 
     return null;
   }
+
+  Future<dynamic> getDailyWeather(double lat, double long) async {
+    Response response;
+
+    var dio = Dio();
+    dio.options.headers['content-Type'] = 'application/json';
+
+    //final prefs = await SharedPreferences.getInstance();
+    //final token = prefs.getString('token') ?? '';
+    //dio.options.headers['authorization'] = "Bearer " + token;
+
+    try {
+      response = await dio.get(urlKey + 'weather/daily/' + lat.toString() + '/'+ long.toString());
+      return response;
+    }
+    on DioError catch (e) {
+
+      return e.response;
+    }
+
+    return null;
+  }
 }

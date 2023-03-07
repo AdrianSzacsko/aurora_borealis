@@ -24,6 +24,8 @@ class Weather{
 class WeatherVariables{
   String weather_main;
   String weather_icon;
+  String weather_description;
+  int weather_id;
   double main_temp;
   double main_temp_max;
   double main_temp_min;
@@ -44,6 +46,8 @@ class WeatherVariables{
   WeatherVariables(
       this.weather_main,
       this.weather_icon,
+      this.weather_description,
+      this.weather_id,
       this.main_temp,
       this.main_temp_max,
       this.main_temp_min,
@@ -63,4 +67,42 @@ class WeatherVariables{
 
   factory WeatherVariables.fromJson(Map<String, dynamic> json) => _$WeatherVariablesFromJson(json);
   Map<String, dynamic> toJson() => _$WeatherVariablesToJson(this);
+}
+
+@JsonSerializable(includeIfNull: false)
+class WeatherVariablesDaily{
+  double temp_day;
+  double temp_min;
+  double temp_max;
+  double temp_night;
+  double temp_eve;
+  double temp_morn;
+  double feels_like_day;
+  double feels_like_night;
+  double feels_like_eve;
+  double feels_like_morn;
+  int pressure;
+  int humidity;
+  String weather_main;
+  String weather_icon;
+  String weather_description;
+  int weather_id;
+  double wind_speed;
+  int wind_deg;
+  double wind_gust;
+  double clouds;
+  double rain;
+  double snow;
+  double pop;
+
+
+  WeatherVariablesDaily(this.temp_day, this.temp_min, this.temp_max,
+      this.temp_night, this.temp_eve, this.temp_morn, this.feels_like_day,
+      this.feels_like_night, this.feels_like_eve, this.feels_like_morn,
+      this.pressure, this.humidity, this.weather_main, this.weather_icon,
+      this.weather_description, this.weather_id, this.wind_speed, this.wind_deg,
+      this.wind_gust, this.clouds, this.rain, this.snow, this.pop);
+
+  factory WeatherVariablesDaily.fromJson(Map<String, dynamic> json) => _$WeatherVariablesDailyFromJson(json);
+  Map<String, dynamic> toJson() => _$WeatherVariablesDailyToJson(this);
 }

@@ -9,6 +9,7 @@ class WeatherData {
   late Weather weatherInfo;
   late WeatherVariables currentWeather;
   late List<WeatherVariables> hourlyWeather;
+  late List<WeatherVariablesDaily> dailyWeather;
   
   
   /// Private constructor
@@ -25,10 +26,12 @@ class WeatherData {
 
     var responseCurr = await WeatherNetwork().getCurrentWeather(lat, long);
     var responseHourly = await WeatherNetwork().getHourlyWeather(lat, long);
+    var responseDaily = await WeatherNetwork().getDailyWeather(lat, long);
 
 
-    if (responseCurr.statusCode == 200 && responseHourly.statusCode == 200) {
-      component.fromJson(responseCurr.data, responseHourly.data);
+    if (responseCurr.statusCode == 200 && responseHourly.statusCode == 200 &&
+    responseDaily.statusCode == 200) {
+      component.fromJson(responseCurr.data, responseHourly.data, responseDaily.data);
 
     }
 
@@ -42,14 +45,21 @@ class WeatherData {
   }
 
 
-  fromJson(Map<String, dynamic> jsonCurr, Map<String, dynamic> jsonHourly){
+  fromJson(Map<String, dynamic> jsonCurr, Map<String, dynamic> jsonHourly, Map<String, dynamic> jsonDaily){
     weatherInfo = Weather.fromJson(jsonCurr['weather']);
     currentWeather = WeatherVariables.fromJson(jsonCurr['variables']);
-    List<WeatherVariables> temp = [];
+    List<WeatherVariables> temp_h = [];
     for (int i = 0; i < jsonHourly['variables'].length; i++){
-      temp.add(WeatherVariables.fromJson(jsonHourly['variables'][i]));
+      temp_h.add(WeatherVariables.fromJson(jsonHourly['variables'][i]));
     }
 
-    hourlyWeather = temp;
+    hourlyWeather = temp_h;
+
+    List<WeatherVariablesDaily> temp_d = [];
+    for (int i = 0; i < jsonDaily['variables'].length; i++){
+      temp_d.add(WeatherVariablesDaily.fromJson(jsonDaily['variables'][i]));
+    }
+
+    dailyWeather = temp_d;
   }
 }

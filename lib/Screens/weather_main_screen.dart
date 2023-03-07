@@ -1,6 +1,8 @@
+import 'package:aurora_borealis/Components/custom_map.dart';
 import 'package:aurora_borealis/Weather/weather.dart';
 import 'package:aurora_borealis/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import '../Components/custom_form_field.dart';
 import '../Components/ext_string.dart';
 import '../Components/oval_component.dart';
@@ -8,7 +10,10 @@ import 'register_screen.dart';
 import 'login_screen.dart';
 import '../Components/app_bar.dart';
 import 'package:fl_chart/fl_chart.dart';
-import '../Weather/hourly_weather_data.dart';
+import '../Weather/weather_data.dart';
+import 'package:latlong2/latlong.dart' as latLng;
+import 'package:geolocator/geolocator.dart';
+
 
 class WeatherMainScreen extends StatefulWidget {
   const WeatherMainScreen({Key? key}) : super(key: key);
@@ -17,7 +22,45 @@ class WeatherMainScreen extends StatefulWidget {
   WeatherMainScreenState createState() => WeatherMainScreenState();
 }
 
+enum WeatherType {
+  daily,
+  hourly
+}
+
+//https://stackoverflow.com/questions/54371874/how-get-the-name-of-the-days-of-the-week-in-dart
+
 class WeatherMainScreenState extends State<WeatherMainScreen> {
+
+  MapController mapController = MapController();
+  late latLng.LatLng currentPosition;
+
+
+  void handleLongPressInMap(latLng.LatLng point){
+    setState(() {
+      currentPosition = point;
+      print(point);
+    });
+  }
+
+  Future<void> _getCurrentLocation() async {
+    final status = await Geolocator.checkPermission();
+    if (status == LocationPermission.denied) {
+      await Geolocator.requestPermission();
+    }
+
+    final position = await Geolocator.getCurrentPosition();
+    setState(() {
+      currentPosition = latLng.LatLng(position.latitude,
+          position.longitude);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+      _getCurrentLocation();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -27,13 +70,17 @@ class WeatherMainScreenState extends State<WeatherMainScreen> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          const Align(
+          Align(
             alignment: Alignment.topCenter,
-            child: Placeholder(),
+            child: CustomMap(
+                mapController: mapController,
+                //coors: latLng.LatLng(currentPosition.latitude, currentPosition.longitude),
+              onLongPress: handleLongPressInMap,
+            ),
           ),
 
         FutureBuilder(
-          future: WeatherData.create(48.269798, 19.820565),
+          future: Future.microtask(() => WeatherData.create(currentPosition.latitude, currentPosition.longitude)),
           builder: (
               BuildContext context,
               AsyncSnapshot<dynamic> snapshot
@@ -176,8 +223,8 @@ class WeatherMainScreenState extends State<WeatherMainScreen> {
                           scrollDirection: Axis.horizontal,
                           child: SizedBox(
                             height: 200,
-                            width: 4000,
-                            child: createChart(weatherData),
+                            width: 1000,
+                            child: createChart(weatherData, WeatherType.hourly),
                           ),
                         ),
                       )
@@ -186,7 +233,22 @@ class WeatherMainScreenState extends State<WeatherMainScreen> {
                     height: 5,
                   ),
                   //daily forecast
-
+                  CustomContainer(
+                      child: Padding(
+                        padding: const EdgeInsets.all(5),
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: SizedBox(
+                            height: 200,
+                            width: 700,
+                            child: createChart(weatherData, WeatherType.daily),
+                          ),
+                        ),
+                      )
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
                   //Advanced statistics
                   advancedStats(weatherData.currentWeather),
                   const SizedBox(
@@ -264,36 +326,34 @@ class WeatherMainScreenState extends State<WeatherMainScreen> {
             ),
           ],
         ),
-
-        /*child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            for (int i = 0; i < boxes.length; i += 2)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  boxes[i],
-                  if (i + 1 < boxes.length) boxes[i + 1],
-                ],
-              ),
-            const SizedBox(height: 16.0),
-          ],
-        ),*/
       )
     );
   }
 
 
   //create chart
-  Widget createChart(WeatherData weatherData){
+  Widget createChart(WeatherData weatherData, WeatherType weatherType){
           return LineChart(
               LineChartData(
                 lineBarsData: [
+                  weatherType == WeatherType.hourly ?
                   LineChartBarData(
                     //spots: weatherData.map((point) => FlSpot(point.x, point.y)).toList(),
                     spots: weatherData.hourlyWeather.asMap().map((index, element) => MapEntry(
                       index,
                       FlSpot(index.toDouble(), element.main_temp.toDouble()),
+                    )).values.toList(),
+                    isCurved: false,
+                    // dotData: FlDotData(
+                    //   show: false,
+                    // ),
+                  )
+                  :
+                  LineChartBarData(
+                    //spots: weatherData.map((point) => FlSpot(point.x, point.y)).toList(),
+                    spots: weatherData.dailyWeather.asMap().map((index, element) => MapEntry(
+                      index,
+                      FlSpot(index.toDouble(), element.temp_day.toDouble()),
                     )).values.toList(),
                     isCurved: false,
                     // dotData: FlDotData(
@@ -318,7 +378,10 @@ class WeatherMainScreenState extends State<WeatherMainScreen> {
                     sideTitles: SideTitles(
                       reservedSize: 45,
                       showTitles: true,
-                      getTitlesWidget: bottomTitleWidgets,
+                      getTitlesWidget: weatherType == WeatherType.hourly ?
+                      bottomTitleWidgetsHourly
+                      :
+                      bottomTitleWidgetsDaily,
                     )
                   ),
                 )
@@ -326,7 +389,7 @@ class WeatherMainScreenState extends State<WeatherMainScreen> {
           );
   }
 
-  Widget bottomTitleWidgets(double value, TitleMeta meta) {
+  Widget bottomTitleWidgetsHourly(double value, TitleMeta meta) {
     DateTime now = DateTime.now();
     int currentHour = now.hour;
 
@@ -338,6 +401,30 @@ class WeatherMainScreenState extends State<WeatherMainScreen> {
     String text = hour.toString() + ":00";
     return RotationTransition(turns: const AlwaysStoppedAnimation(300/360), child: Text(text, textAlign: TextAlign.right));
     //return FittedBox(child: Text(text, style: style, textAlign: TextAlign.center), fit: BoxFit.fitWidth, );
+  }
+
+  Widget bottomTitleWidgetsDaily(double value, TitleMeta meta) {
+    DateTime now = DateTime.now();
+    int currentDay = now.weekday - 1;
+
+    int day = currentDay + value.toInt();
+    if (day >= 7){
+      day = day % 7;
+    }
+
+    const Map<int, String> weekdayName = {
+      0: "Monday",
+      1: "Tuesday",
+      2: "Wednesday",
+      3: "Thursday",
+      4: "Friday",
+      5: "Saturday",
+      6: "Sunday"
+    };
+
+
+    String? text = weekdayName[day];
+    return RotationTransition(turns: const AlwaysStoppedAnimation(300/360), child: Text(text!, textAlign: TextAlign.right));
   }
 
   Widget weatherText(String text, double fontSize) {

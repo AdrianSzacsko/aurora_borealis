@@ -1,8 +1,12 @@
+import 'package:aurora_borealis/Components/custom_map.dart';
 import 'package:flutter/material.dart';
 import '../Components/custom_form_field.dart';
 import '../Components/ext_string.dart';
 import 'register_screen.dart';
 import '../Components/app_bar.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart' as latLng;
+import 'package:geolocator/geolocator.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -15,6 +19,7 @@ class LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final _mapController = MapController();
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +28,13 @@ class LoginScreenState extends State<LoginScreen> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          const Align(
+          Align(
             alignment: Alignment.topCenter,
-            child: Placeholder(),
+            child: CustomMap(
+              mapController: _mapController,
+              //coors: latLng.LatLng(48.269798, 19.820565),
+              onLongPress: null,
+            ),
           ),
           Align(
             alignment: Alignment.bottomCenter,
