@@ -79,14 +79,46 @@ class CustomMapState extends State<CustomMap>{
             userAgentPackageName: 'com.example.aurora_borealis',
           ),
           CurrentLocationLayer(),
-          Positioned(
+          SizedBox(
+            width: double.infinity,
+            child: Padding(
+              padding: const EdgeInsets.all(5),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  FloatingActionButton(
+                    heroTag: "btnLocation",
+                    onPressed: _goToCurrentLocation,
+                    child: const Icon(Icons.my_location),
+                  ),
+                  const SizedBox(height: 5,),
+                  FloatingActionButton(
+                    heroTag: "btnZoomIn",
+                    onPressed: (){
+                      widget.mapController.move(widget.mapController.center, widget.mapController.zoom + 1);
+                    },
+                    child: const Icon(Icons.zoom_in),
+                  ),
+                  const SizedBox(height: 5,),
+                  FloatingActionButton(
+                    heroTag: "btnZoomOut",
+                    onPressed: (){
+                      widget.mapController.move(widget.mapController.center, widget.mapController.zoom - 1);
+                    },
+                    child: const Icon(Icons.zoom_out),
+                  ),
+                ],
+              ),
+            ),
+          )
+          /*Positioned(
             top: 5,
             right: 5,
             child: FloatingActionButton(
               onPressed: _goToCurrentLocation,
               child: const Icon(Icons.my_location),
             ),
-          ),
+          ),*/
         ],
 
         nonRotatedChildren: [],
