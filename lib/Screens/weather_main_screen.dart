@@ -1,5 +1,5 @@
 import 'package:aurora_borealis/Components/custom_map.dart';
-import 'package:aurora_borealis/Weather/weather.dart';
+import 'package:aurora_borealis/Network_Responses/weather.dart';
 import 'package:aurora_borealis/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -10,7 +10,7 @@ import 'register_screen.dart';
 import 'login_screen.dart';
 import '../Components/app_bar.dart';
 import 'package:fl_chart/fl_chart.dart';
-import '../Weather/weather_data.dart';
+import '../Network_Responses/weather_data.dart';
 import 'package:latlong2/latlong.dart' as latLng;
 import 'package:geolocator/geolocator.dart';
 
@@ -42,6 +42,14 @@ class WeatherMainScreenState extends State<WeatherMainScreen> {
     });
   }
 
+  void handleSearchResultTap(latLng.LatLng point){
+    setState(() {
+      currentPosition = point;
+      mapController.move(point, mapController.zoom);
+      print(point);
+    });
+  }
+
   Future<void> _getCurrentLocation() async {
     final status = await Geolocator.checkPermission();
     if (status == LocationPermission.denied) {
@@ -66,7 +74,7 @@ class WeatherMainScreenState extends State<WeatherMainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      appBar: myAppBar(context),
+      appBar: myAppBarWithSearch(context, handleSearchResultTap),
       body: Stack(
         fit: StackFit.expand,
         children: [
@@ -118,10 +126,10 @@ class WeatherMainScreenState extends State<WeatherMainScreen> {
               borderRadius: const BorderRadius.only(
                   topRight: Radius.circular(40),
                   topLeft: Radius.circular(40))),
-          child: SingleChildScrollView(
-            child: Padding(
-              padding:
-              const EdgeInsets.only(left: 16, right: 16, top: 16),
+          child: Padding(
+            padding:
+            const EdgeInsets.only(left: 16, right: 16, top: 16),
+            child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
