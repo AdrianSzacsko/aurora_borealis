@@ -6,6 +6,7 @@ import 'register_screen.dart';
 import 'login_screen.dart';
 import 'weather_main_screen.dart';
 import '../Components/app_bar.dart';
+import 'profile_screen.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({Key? key}) : super(key: key);
@@ -50,7 +51,7 @@ class MenuScreenState extends State<MenuScreen> {
                         menuTile(context, "Sign Up", () => Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterScreen()))),
                         menuTile(context, "Weather", () => Navigator.push(context, MaterialPageRoute(builder: (context) => const WeatherMainScreen()))),
                         menuTile(context, "Feed", () => Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()))),
-                        menuTile(context, "Profile", () => Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()))),
+                        menuTile(context, "Profile", () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileScreen()))),
                         menuTile(context, "Settings", () => Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()))),
                       ],
                     ),
