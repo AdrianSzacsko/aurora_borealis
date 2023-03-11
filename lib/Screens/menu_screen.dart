@@ -42,50 +42,98 @@ class MenuScreenState extends State<MenuScreen> {
                         topLeft: Radius.circular(40))),
                 child: SingleChildScrollView(
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+                    padding:
+                        const EdgeInsets.only(left: 16, right: 16, top: 16),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        menuTile(context, 'Sign In', () => Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()))),
-                        menuTile(context, "Sign Up", () => Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterScreen()))),
-                        menuTile(context, "Weather", () => Navigator.push(context, MaterialPageRoute(builder: (context) => const WeatherMainScreen()))),
-                        menuTile(context, "Feed", () => Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()))),
-                        menuTile(context, "Profile", () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileScreen()))),
-                        menuTile(context, "Settings", () => Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()))),
+                        menuTile(
+                            context,
+                            'Sign In',
+                            () => {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const LoginScreen()))
+                                }),
+                        menuTile(
+                            context,
+                            "Sign Up",
+                            () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const RegisterScreen()))),
+                        menuTile(
+                            context,
+                            "Weather",
+                            () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const WeatherMainScreen()))),
+                        menuTile(
+                            context,
+                            "Feed",
+                            () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const LoginScreen()))),
+                        menuTile(
+                            context,
+                            "Profile",
+                            () => {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const ProfileScreen(),
+                                          settings: RouteSettings(
+                                              arguments: ModalRoute.of(context)!
+                                                  .settings
+                                                  .arguments)))
+                                }),
+                        menuTile(
+                            context,
+                            "Settings",
+                            () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const LoginScreen()))),
                       ],
                     ),
                   ),
-                )
-            ),
+                )),
           ),
         ],
       ),
     );
   }
 
-  Widget menuTile(BuildContext context, String text, Function newScreen){
+  Widget menuTile(BuildContext context, String text, Function newScreen) {
     return Card(
-      clipBehavior: Clip.hardEdge,
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        side: BorderSide(
-          color: Theme.of(context).colorScheme.outline,
+        clipBehavior: Clip.hardEdge,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          side: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+          ),
+          borderRadius: const BorderRadius.all(Radius.circular(12)),
         ),
-        borderRadius: const BorderRadius.all(Radius.circular(12)),
-      ),
-      child: InkWell(
-        splashColor: primaryColor,
-        onTap: () {
-          newScreen();
-        },
-        child: SizedBox(
-          width: double.infinity,
-          height: 80,
-          child: Center(child: Text(text)),
-        ),
-      )
-    );
+        child: InkWell(
+          splashColor: primaryColor,
+          onTap: () {
+            newScreen();
+          },
+          child: SizedBox(
+            width: double.infinity,
+            height: 80,
+            child: Center(child: Text(text)),
+          ),
+        ));
   }
-
 }

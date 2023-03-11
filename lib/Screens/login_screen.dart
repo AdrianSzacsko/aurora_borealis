@@ -1,10 +1,13 @@
 import 'package:aurora_borealis/Components/custom_map.dart';
+import 'package:aurora_borealis/Screens/menu_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../Components/custom_form_field.dart';
 import '../Components/ext_string.dart';
 import 'register_screen.dart';
 import '../Components/app_bar.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:aurora_borealis/Network/auth.dart';
 import 'package:latlong2/latlong.dart' as latLng;
 import 'package:geolocator/geolocator.dart';
 
@@ -94,13 +97,19 @@ class LoginScreenState extends State<LoginScreen> {
                                   prefixIcon: Icons.password_outlined,
                                   isPassword: true),
                               FilledButton(
-                                onPressed: () {
+                                onPressed: () async {
                                   if (_formKey.currentState!.validate()) {
                                     print(emailController.text + " " + passwordController.text);
+                                    var response = await Auth().login(emailController.text, passwordController.text);
+                                    if (response.statusCode == 200){
+                                      SharedPreferences shared = await SharedPreferences.getInstance();
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => const MenuScreen(),
+                                      settings: RouteSettings(arguments: shared.getInt('user_id'))));
+                                    }
+                                    else {
+                                      //TODO error message
+                                    }
                                     //change screen
-                                  }
-                                  else {
-
                                   }
                                 },
                                 child: const Text('Sign In'),

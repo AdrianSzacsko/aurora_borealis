@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import '../Components/custom_form_field.dart';
 import '../Components/ext_string.dart';
+import '../Network/auth.dart';
 import 'login_screen.dart';
 import '../Components/app_bar.dart';
+import 'menu_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -114,9 +116,16 @@ class RegisterScreenState extends State<RegisterScreen> {
                                   prefixIcon: Icons.password_outlined,
                                   isPassword: true),
                               FilledButton(
-                                onPressed: () {
+                                onPressed: () async {
                                   if (_formKey.currentState!.validate()) {
                                     print(emailController.text + " " + passwordController.text);
+                                    var response = await Auth().register(emailController.text, firstNameController.text, lastNameController.text, passwordController.text);
+                                    if (response.statusCode == 200){
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+                                    }
+                                    else {
+                                      //TODO error message
+                                    }
                                     //change screen
                                   }
                                   else {
