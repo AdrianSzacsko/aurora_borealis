@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../constants.dart';
 import '../Screens/menu_screen.dart';
 import 'package:aurora_borealis/Network_Responses/search_results.dart';
@@ -29,9 +30,10 @@ AppBar myAppBar(BuildContext context) {
       Padding(
           padding: const EdgeInsets.only(right: 20.0),
           child: GestureDetector(
-            onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const MenuScreen()));
+            onTap: () async {
+              SharedPreferences shared = await SharedPreferences.getInstance();
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const MenuScreen(),
+                  settings: RouteSettings(arguments: shared.getInt('user_id'))));
             },
             child: const Icon(Icons.menu),
           )),
@@ -91,9 +93,10 @@ AppBar myAppBarWithSearch(BuildContext context, void Function(LatLng.LatLng poin
       Padding(
           padding: const EdgeInsets.only(right: 20.0),
           child: GestureDetector(
-            onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const MenuScreen()));
+            onTap: () async {
+              SharedPreferences shared = await SharedPreferences.getInstance();
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const MenuScreen(),
+                  settings: RouteSettings(arguments: shared.getInt('user_id'))));
             },
             child: const Icon(Icons.menu),
           )),

@@ -1,5 +1,6 @@
 import 'package:aurora_borealis/Components/custom_map.dart';
 import 'package:aurora_borealis/Components/custom_network_image.dart';
+import 'package:aurora_borealis/Components/oval_component.dart';
 import 'package:aurora_borealis/Network/farm.dart';
 import 'package:aurora_borealis/Network/profile.dart';
 import 'package:aurora_borealis/Network_Responses/farms.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Components/custom_form_field.dart';
 import '../Components/ext_string.dart';
+import '../Components/marker_shape.dart';
 import '../Network_Responses/profile.dart';
 import '../key.dart';
 import 'register_screen.dart';
@@ -25,6 +27,7 @@ class ProfileScreen extends StatefulWidget {
 
 class ProfileScreenState extends State<ProfileScreen> {
   final _mapController = MapController();
+  List<Marker> markers = [];
 
   @override
   Widget build(BuildContext context) {
@@ -41,16 +44,19 @@ class ProfileScreenState extends State<ProfileScreen> {
               mapController: _mapController,
               //coors: latLng.LatLng(48.269798, 19.820565),
               onLongPress: null,
+              markerLayer: MarkerLayer(
+                markers: markers,
+              ),
             ),
           ),
           FutureBuilder(
               future: Profile.create(user_id),
               builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                 if (snapshot.hasData) {
-                  //TODO add variable for my_profile or not
 
                   Profile profile = snapshot.data as Profile;
                   bool myProfile = user_id == profile.id;
+                  generateMarkers(profile.farms);
 
                   return Align(
                     alignment: Alignment.bottomCenter,
@@ -220,6 +226,22 @@ class ProfileScreenState extends State<ProfileScreen> {
       ],
     );
   }
+
+  void addMarker(Farms point){
+    markers.add(Marker(
+        point: latLng.LatLng(point.latitude, point.longitude),
+        width: 150,
+        height: 70,
+        builder: (context) => CustomShape(child: Text(point.name))));
+  }
+
+  void generateMarkers(List<Farms> points){
+    markers.clear();
+    points.forEach((element) {
+      addMarker(element);
+    });
+  }
+
 }
 
 class FarmListTile extends ListTile {
