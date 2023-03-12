@@ -10,10 +10,12 @@ class CustomMap extends StatefulWidget {
     required this.mapController,
     this.coors,
     this.onLongPress,
+    this.markerLayer,
   }) : super(key: key);
 
   final MapController mapController;
   LatLng.LatLng? coors;
+  Widget? markerLayer;
 
   void Function(LatLng.LatLng point)? onLongPress;
 
@@ -78,6 +80,7 @@ class CustomMapState extends State<CustomMap>{
             subdomains: const ['a', 'b', 'c'],
             userAgentPackageName: 'com.example.aurora_borealis',
           ),
+          widget.markerLayer == null ? Container() : widget.markerLayer!,
           CurrentLocationLayer(),
           SizedBox(
             width: double.infinity,

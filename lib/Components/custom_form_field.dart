@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'ext_string.dart';
 
 class CustomFormField extends StatelessWidget {
-  CustomFormField({
+  const CustomFormField({
     Key? key,
     required this.hintText,
     required this.labelText,
