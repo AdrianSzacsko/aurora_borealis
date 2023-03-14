@@ -19,7 +19,7 @@ class CustomNetworkImage extends StatelessWidget{
           if (snapshot.hasData) {
             return CircleAvatar(
               backgroundImage: NetworkImage(
-                url,
+                '${url}?${DateTime.now().millisecondsSinceEpoch.toString()}',
                 headers: {'authorization': 'Bearer ' + snapshot.data.getString('token') ?? ''},
               ),
               radius: 50,

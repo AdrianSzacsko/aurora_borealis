@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:aurora_borealis/Components/custom_map.dart';
 import 'package:aurora_borealis/Components/custom_network_image.dart';
 import 'package:aurora_borealis/Components/oval_component.dart';
@@ -17,6 +19,7 @@ import '../Components/app_bar.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart' as latLng;
 import 'package:geolocator/geolocator.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -82,10 +85,41 @@ class ProfileScreenState extends State<ProfileScreen> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceAround,
                                     children: [
-                                      CustomNetworkImage(
-                                        url: urlKey +
-                                            'profile/profile_pic/' +
-                                            profile.id.toString(),
+                                      Stack(
+                                        children: [
+                                          CustomNetworkImage(
+                                            url: urlKey +
+                                                'profile/profile_pic/' +
+                                                profile.id.toString(),
+                                          ),
+                                          myProfile ? Container(
+                                            width: 100,
+                                            height: 100,
+                                            alignment: const Alignment(1,1),
+                                            child: CircleAvatar(
+                                              radius: 20,
+                                              backgroundColor: Colors.white,
+                                              child: IconButton(
+                                                padding: EdgeInsets.zero,
+                                                  onPressed: () async {
+                                                    await showDialog(
+                                                        context: context,
+                                                        builder: (context) {
+                                                          return ImageDialog(profile);
+                                                        });
+                                                    setState(() {
+
+                                                    });
+                                                  },
+                                                  icon: Icon(
+                                                    Icons.add_circle_outline,
+                                                    size: 40,
+                                                    color: primaryColor[900],
+                                                  )
+                                              ),
+                                            ),
+                                          ) : Container(),
+                                        ],
                                       ),
                                       SizedBox(
                                         child: Column(
@@ -274,6 +308,73 @@ class FarmListTile extends ListTile {
     );
   }
 }
+
+class ImageDialog extends StatefulWidget {
+  final Profile profile;
+
+  ImageDialog(this.profile);
+
+  @override
+  _ImageDialogState createState() => _ImageDialogState();
+}
+
+class _ImageDialogState extends State<ImageDialog> {
+  final ImagePicker _picker = ImagePicker();
+  bool isPicked = false;
+  XFile? image;
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(25),
+      ),
+      alignment: Alignment.center,
+      title: const Text("Pick Image"),
+      content: SingleChildScrollView(
+        child: Column(
+          children: [
+              !isPicked
+                  ? CustomNetworkImage(
+                url: urlKey +
+                    'profile/profile_pic/' +
+                    widget.profile.id.toString(),
+              )
+                  :
+              CircleAvatar(
+                backgroundImage: FileImage(File(image!.path)),
+              radius: 50,
+              ),
+
+            !isPicked
+                ? FilledButton(
+              onPressed: () async {
+                image = await _picker.pickImage(
+                  source: ImageSource.gallery,
+                  maxHeight: 4000,
+                  maxWidth: 4000,
+                );
+                setState(() {
+                  isPicked = true;
+                });
+              },
+              child: const Text("Choose new"),
+            )
+                : FilledButton(
+              onPressed: () async {
+                await ProfileNetwork().putProfilePic(image);
+                Navigator.pop(context, true);
+              },
+              child: const Text("Upload"),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
 
 class MapDialog {
   MapController mapController = MapController();

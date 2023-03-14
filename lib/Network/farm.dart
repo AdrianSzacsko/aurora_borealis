@@ -67,7 +67,7 @@ class FarmNetwork with ChangeNotifier {
     dio.options.headers['authorization'] = "Bearer " + token;
 
     try {
-      response = await dio.post(urlKey + 'farms/');
+      response = await dio.get(urlKey + 'farms/');
       return response;
     }
     on DioError catch (e) {

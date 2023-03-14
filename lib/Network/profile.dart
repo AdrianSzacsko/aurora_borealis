@@ -1,8 +1,13 @@
+import 'dart:io';
+
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 import 'package:aurora_borealis/key.dart';
 //import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:mime_type/mime_type.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileNetwork with ChangeNotifier {
@@ -62,6 +67,43 @@ class ProfileNetwork with ChangeNotifier {
 
     try {
       response = await dio.get(urlKey + 'profile/profile_pic/' + id.toString());
+      return response;
+    }
+    on DioError catch (e) {
+
+      return e.response;
+    }
+
+    return null;
+  }
+
+  Future<dynamic> putProfilePic(XFile? image) async {
+    final String? mimeType = mime(image!.path);
+    final File file = File(image.path);
+    print(mimeType.toString().split("/")[1]);
+    String filetype = mimeType.toString().split("/")[1];
+
+    final formData = FormData.fromMap({
+      'file': await MultipartFile.fromFile(
+        file.path,
+        filename: 'image.' + filetype,
+        contentType: MediaType('image', filetype),
+      ),
+    });
+
+
+    Response response;
+
+    var dio = Dio();
+    dio.options.headers['content-Type'] = 'image.' + filetype;
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? '';
+    dio.options.headers['authorization'] = "Bearer " + token;
+    dio.options.headers['responseType'] = ResponseType.plain;
+
+    try {
+      response = await dio.put(urlKey + 'profile/pic', data: formData);
       return response;
     }
     on DioError catch (e) {

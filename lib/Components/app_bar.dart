@@ -1,3 +1,4 @@
+import 'package:aurora_borealis/Network_Responses/farms.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,6 +19,8 @@ AppBar myAppBar(BuildContext context) {
           bool? result = await dialogConfirmation(
               context, "Log Out", "Are you sure you want to log out?");
           if (result == true) {
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            await prefs.clear();
             SystemNavigator.pop();
           }
         }
@@ -42,6 +45,7 @@ AppBar myAppBar(BuildContext context) {
 }
 
 AppBar myAppBarWithSearch(BuildContext context, void Function(LatLng.LatLng point) onTilePress) {
+
   return AppBar(
     backgroundColor: primaryColor,
     //leading: const Icon(Icons.menu),
@@ -224,18 +228,32 @@ class MySearchDelegate extends SearchDelegate<String> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
+
     // This is where you can display suggestions as the user types in the search query.
     // For example, you can use a ListView to display a list of suggestions.
-    return ListView.builder(
-      itemCount: 5,
-      itemBuilder: (BuildContext context, int index) {
-        return ListTile(
-          title: Text('Suggestion Farm ${index + 1}'),
-          onTap: () {
-            // This is where you can update the search query when the user taps on a suggestion.
-            query = 'Suggestion Farm ${index + 1}';
-          },
-        );
+    return FutureBuilder(
+      future: FarmsList.create(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+
+        if (snapshot.hasData){
+          FarmsList farmsList = snapshot.data as FarmsList;
+
+          return ListView.builder(
+            itemCount: farmsList.farms.length,
+            itemBuilder: (BuildContext context, int index) {
+              return ListTile(
+                title: Text(farmsList.farms[index].name),
+                onTap: () {
+                  onTilePress(LatLng.LatLng(farmsList.farms[index].latitude, farmsList.farms[index].longitude));
+                  close(context, "Close");
+                },
+              );
+            },
+          );
+        }
+        else{
+          return const Center(child: CircularProgressIndicator());
+        }
       },
     );
   }
