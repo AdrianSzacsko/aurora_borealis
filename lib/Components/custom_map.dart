@@ -62,7 +62,7 @@ class CustomMapState extends State<CustomMap>{
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.5,
+      height: MediaQuery.of(context).size.height * 0.35,
       child: FlutterMap(
         mapController: widget.mapController,
         options: MapOptions(

@@ -33,21 +33,17 @@ class LoginScreenState extends State<LoginScreen> {
         children: [
           Align(
             alignment: Alignment.topCenter,
-            child: CustomMap(
-              mapController: _mapController,
-              //coors: latLng.LatLng(48.269798, 19.820565),
-              onLongPress: null,
-            ),
+            child: Image.asset('assets/images/backgroundGreen.jpg',
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height,
+              fit: BoxFit.fill,),
           ),
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(
-                    color: Colors.black,
-                  ),
+                  color: Colors.white.withOpacity(0.7),
                   borderRadius: const BorderRadius.only(
                       topRight: Radius.circular(40),
                       topLeft: Radius.circular(40))),

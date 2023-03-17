@@ -7,7 +7,7 @@ extension ExtString on String {
   }
 
   bool get isValidName{
-    final nameRegExp = RegExp(r"^\s*([A-Za-z]{1,}([\.,] |[-']| ))+[A-Za-z]+\.?\s*$");
+    final nameRegExp = RegExp(r"^[a-zA-Z]{3,}$");
     return nameRegExp.hasMatch(this);
   }
 

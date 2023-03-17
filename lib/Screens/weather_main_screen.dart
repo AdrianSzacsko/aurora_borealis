@@ -119,9 +119,12 @@ class WeatherMainScreenState extends State<WeatherMainScreen> {
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height * 0.55,
           decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(
-                color: Colors.black,
+              color: Colors.white.withOpacity(0.7),
+              image: DecorationImage(
+                fit: BoxFit.fill,
+                image: Image.asset('assets/images/backgroundGreen.jpg',
+                ).image,
+                colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.2), BlendMode.dstATop),
               ),
               borderRadius: const BorderRadius.only(
                   topRight: Radius.circular(40),

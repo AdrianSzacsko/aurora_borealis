@@ -28,19 +28,19 @@ class RegisterScreenState extends State<RegisterScreen> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          const Align(
+          Align(
             alignment: Alignment.topCenter,
-            child: Placeholder(),
+            child: Image.asset('assets/images/backgroundGreen.jpg',
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height,
+              fit: BoxFit.fill,),
           ),
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(
-                    color: Colors.black,
-                  ),
+                  color: Colors.white.withOpacity(0.7),
                   borderRadius: const BorderRadius.only(
                       topRight: Radius.circular(40),
                       topLeft: Radius.circular(40))),
@@ -120,7 +120,7 @@ class RegisterScreenState extends State<RegisterScreen> {
                                   if (_formKey.currentState!.validate()) {
                                     print(emailController.text + " " + passwordController.text);
                                     var response = await Auth().register(emailController.text, firstNameController.text, lastNameController.text, passwordController.text);
-                                    if (response.statusCode == 200){
+                                    if (response.statusCode == 201){
                                       Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
                                     }
                                     else {
@@ -132,7 +132,7 @@ class RegisterScreenState extends State<RegisterScreen> {
 
                                   }
                                 },
-                                child: const Text('Sign In'),
+                                child: const Text('Sign Up'),
                               )
                             ],
                           ),

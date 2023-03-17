@@ -1,3 +1,4 @@
+import 'package:aurora_borealis/Components/oval_component.dart';
 import 'package:aurora_borealis/constants.dart';
 import 'package:flutter/material.dart';
 import '../Components/custom_form_field.dart';
@@ -24,26 +25,30 @@ class MenuScreenState extends State<MenuScreen> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          const Align(
+          Align(
             alignment: Alignment.topCenter,
-            child: Placeholder(),
+            child: Image.asset('assets/images/backgroundGreen.jpg',
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height,
+              fit: BoxFit.fill,),
           ),
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-                width: MediaQuery.of(context).size.width,
+                width: MediaQuery
+                    .of(context)
+                    .size
+                    .width,
                 decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(
-                      color: Colors.black,
-                    ),
+                    color: Colors.white.withOpacity(0.7),
+
                     borderRadius: const BorderRadius.only(
                         topRight: Radius.circular(40),
                         topLeft: Radius.circular(40))),
                 child: SingleChildScrollView(
                   child: Padding(
                     padding:
-                        const EdgeInsets.only(left: 16, right: 16, top: 16),
+                    const EdgeInsets.only(left: 16, right: 16, top: 16),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -51,58 +56,65 @@ class MenuScreenState extends State<MenuScreen> {
                         menuTile(
                             context,
                             'Sign In',
-                            () => {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const LoginScreen()))
-                                }),
+                                () =>
+                            {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                      const LoginScreen()))
+                            }),
                         menuTile(
                             context,
                             "Sign Up",
-                            () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
+                                () =>
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
                                         const RegisterScreen()))),
                         menuTile(
                             context,
                             "Weather",
-                            () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
+                                () =>
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
                                         const WeatherMainScreen()))),
                         menuTile(
                             context,
                             "Feed",
-                            () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
+                                () =>
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
                                         const LoginScreen()))),
                         menuTile(
                             context,
                             "Profile",
-                            () => {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const ProfileScreen(),
-                                          settings: RouteSettings(
-                                              arguments: ModalRoute.of(context)!
-                                                  .settings
-                                                  .arguments)))
-                                }),
+                                () =>
+                            {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                      const ProfileScreen(),
+                                      settings: RouteSettings(
+                                          arguments: ModalRoute
+                                              .of(context)!
+                                              .settings
+                                              .arguments)))
+                            }),
                         menuTile(
                             context,
                             "Settings",
-                            () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
+                                () =>
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
                                         const LoginScreen()))),
                       ],
                     ),
@@ -115,25 +127,27 @@ class MenuScreenState extends State<MenuScreen> {
   }
 
   Widget menuTile(BuildContext context, String text, Function newScreen) {
-    return Card(
-        clipBehavior: Clip.hardEdge,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          side: BorderSide(
-            color: Theme.of(context).colorScheme.outline,
+    return CustomContainer(
+        child: Text(
+          text,
+          style: Theme
+              .of(context)
+              .textTheme
+              .bodyLarge!
+              .copyWith(
+            fontWeight: FontWeight.w600,
+            color: Theme
+                .of(context)
+                .colorScheme
+                .primary,
           ),
-          borderRadius: const BorderRadius.all(Radius.circular(12)),
         ),
-        child: InkWell(
-          splashColor: primaryColor,
-          onTap: () {
-            newScreen();
-          },
-          child: SizedBox(
-            width: double.infinity,
-            height: 80,
-            child: Center(child: Text(text)),
-          ),
-        ));
+      onTap: () {
+        newScreen();
+      },
+      width: double.infinity,
+      height: 80,
+    );
+
   }
 }

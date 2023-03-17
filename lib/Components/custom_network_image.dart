@@ -18,17 +18,24 @@ class CustomNetworkImage extends StatelessWidget{
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             return CircleAvatar(
-              backgroundImage: NetworkImage(
-                '${url}?${DateTime.now().millisecondsSinceEpoch.toString()}',
-                headers: {'authorization': 'Bearer ' + snapshot.data.getString('token') ?? ''},
+              child: ClipOval(
+                child: Image.network(
+                  '$url?${DateTime.now().millisecondsSinceEpoch.toString()}',
+                  headers: {'authorization': 'Bearer ' + snapshot.data.getString('token')},
+                  width: 100,
+                  height: 100,
+                  fit: BoxFit.fill,
+                  errorBuilder: (context, error, stackTrace) {
+                    return const Icon(Icons.image_not_supported, size: 50,);
+                  },
+                ),
               ),
               radius: 50,
             );
           }
           else if (snapshot.hasError){
             return const CircleAvatar(
-              backgroundImage: NetworkImage(
-                  "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"),
+              child: Icon(Icons.account_circle),
               radius: 50,
             );
           }
