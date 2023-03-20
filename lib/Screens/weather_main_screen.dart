@@ -227,7 +227,9 @@ class WeatherMainScreenState extends State<WeatherMainScreen> {
                                         color: Colors.red),
                                     weatherText(weatherData.currentWeather.main_temp_max.toString() + ' °C', 15)
                                   ],
-                                ))),
+                                )
+                            )
+                        ),
                       ],
                     ),
                   ),
@@ -245,7 +247,8 @@ class WeatherMainScreenState extends State<WeatherMainScreen> {
                   //daily forecast
                   CustomChart(
                       weatherData: weatherData,
-                      weatherType: WeatherType.daily),
+                      weatherType: WeatherType.daily
+                  ),
                   const SizedBox(
                     height: 5,
                   ),
@@ -254,7 +257,6 @@ class WeatherMainScreenState extends State<WeatherMainScreen> {
                   const SizedBox(
                     height: 5,
                   ),
-
                 ],
               ),
             ),

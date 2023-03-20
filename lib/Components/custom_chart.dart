@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -214,7 +216,7 @@ class _CustomChartState extends State<CustomChart> {
                 scrollDirection: Axis.horizontal,
                 child: SizedBox(
                   height: 200,
-                  width: 1000,
+                  width: 800,
                   child: createChart(),
                 ),
               ),
@@ -228,6 +230,16 @@ class _CustomChartState extends State<CustomChart> {
   Widget createChart(){
     return LineChart(
         LineChartData(
+
+          lineTouchData: LineTouchData(
+            touchTooltipData: LineTouchTooltipData(
+              getTooltipItems: (touchedSpots) {
+                return touchedSpots.map((touchedSpot) {
+                  return null;
+                }).toList();
+                },
+            )
+          ),
           gridData: FlGridData(
             show: false,
           ),
@@ -244,16 +256,12 @@ class _CustomChartState extends State<CustomChart> {
                 // ),
               )
             ],
-
-            /*minY: weatherType == WeatherType.hourly ?
-                  createMinMax(weatherData, min, WeatherVariable.main_temp) :
-                  createMinMax(weatherData, min, WeatherVariable.temp_day),
-                  maxY: weatherType == WeatherType.hourly ?
-                  createMinMax(weatherData, max, WeatherVariable.main_temp) :
-                  createMinMax(weatherData, max, WeatherVariable.temp_day),*/
+            minY: weatherDataListValues.reduce(min) - 1,
+            maxY: weatherDataListValues.reduce(max) + 5,
             borderData: FlBorderData(
                 show: true,
                 border: Border.all(color: Colors.green.shade900)
+
             ),
             titlesData: FlTitlesData(
                 rightTitles: AxisTitles(
