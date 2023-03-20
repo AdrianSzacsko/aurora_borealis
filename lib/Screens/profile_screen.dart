@@ -461,6 +461,7 @@ class MapDialog {
                             onPressed: () async {
                               if (_formKey.currentState!.validate() &&
                                   markers.isNotEmpty) {
+                                print("pressed submit on map");
                                 var resp = await FarmNetwork().postFarm(
                                     nameController.text,
                                     pickedPoint.latitude,
