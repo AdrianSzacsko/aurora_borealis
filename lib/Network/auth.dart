@@ -10,10 +10,11 @@ import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
-class Auth with ChangeNotifier {
+class AuthNetwork with ChangeNotifier {
   register(String email, String firstname, String lastname, String password) async {
     var response;
     var dio = Dio();
+    dio.options.connectTimeout = const Duration(seconds: 5);
     // dio.options.headers['Authorization'] = 'Bearer '+ token;
     // dio.options.headers['Content-Type'] = 'application/json';
     try {
@@ -27,7 +28,6 @@ class Auth with ChangeNotifier {
       return response;
     }
     on DioError catch (e) {
-      //print(e.response?.statusCode);
       return e.response;
     }
   }
@@ -35,9 +35,10 @@ class Auth with ChangeNotifier {
 
 
   login(String email, String password) async {
-    var response;
+    Response response;
     var dio = Dio();
     dio.options.headers['content-Type'] = "application/x-www-form-urlencoded";
+    dio.options.connectTimeout = const Duration(seconds: 5);
     try {
       FormData formData = FormData.fromMap({
         'grant_type': 'password',
@@ -54,11 +55,9 @@ class Auth with ChangeNotifier {
         Map<String, dynamic> payload = Jwt.parseJwt(response.data["access_token"]);
         prefs.setInt('user_id', payload["user_id"]);
       }
-
       return response;
     }
     on DioError catch (e) {
-      //print(e.response?.statusCode);
       return e.response;
     }
   }

@@ -1,4 +1,5 @@
 import 'package:aurora_borealis/Components/oval_component.dart';
+import 'package:aurora_borealis/Screens/feed_screen.dart';
 import 'package:aurora_borealis/constants.dart';
 import 'package:flutter/material.dart';
 import '../Components/custom_form_field.dart';
@@ -90,7 +91,12 @@ class MenuScreenState extends State<MenuScreen> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                        const LoginScreen()))),
+                                        const FeedScreen(),
+                                        settings: RouteSettings(
+                                            arguments: ModalRoute
+                                                .of(context)!
+                                                .settings
+                                                .arguments)))),
                         menuTile(
                             context,
                             "Profile",
@@ -115,7 +121,8 @@ class MenuScreenState extends State<MenuScreen> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                        const LoginScreen()))),
+                                        const LoginScreen(),
+                                    ))),
                       ],
                     ),
                   ),

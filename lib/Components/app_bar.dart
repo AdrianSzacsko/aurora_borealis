@@ -17,7 +17,7 @@ AppBar myAppBar(BuildContext context) {
           Navigator.of(context).pop();
         } else {
           bool? result = await dialogConfirmation(
-              context, "Log Out", "Are you sure you want to log out?");
+              context, "Exit", "Are you sure you want to exit?");
           if (result == true) {
             SharedPreferences prefs = await SharedPreferences.getInstance();
             await prefs.clear();
@@ -83,7 +83,7 @@ AppBar myAppBarWithSearch(BuildContext context, void Function(LatLng.LatLng poin
           Navigator.of(context).pop();
         } else {
           bool? result = await dialogConfirmation(
-              context, "Log Out", "Are you sure you want to log out?");
+              context, "Exit", "Are you sure you want to exit?");
           if (result == true) {
             SystemNavigator.pop();
           }

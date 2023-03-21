@@ -12,19 +12,22 @@ class NotLoggedInScreen extends StatelessWidget {
       appBar: myAppBar(context),
       body: Stack(
         children: [
-          const Align(
+          Align(
             alignment: Alignment.topCenter,
-            child: Placeholder(),
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: Image.asset('assets/images/backgroundGreen.jpg',
+                width: double.infinity,
+                height: MediaQuery.of(context).size.height,
+                fit: BoxFit.fill,),
+            ),
           ),
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(
-                  color: Colors.black,
-                ),
+                color: Colors.white.withOpacity(0.7),
                 borderRadius: const BorderRadius.only(
                   topRight: Radius.circular(40),
                   topLeft: Radius.circular(40),

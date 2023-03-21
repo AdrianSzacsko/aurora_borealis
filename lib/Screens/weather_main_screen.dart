@@ -146,96 +146,7 @@ class WeatherMainScreenState extends State<WeatherMainScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   //first row with basic statistics
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CustomContainer(
-                            child: Padding(
-                            padding: const EdgeInsets.all(5),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment:
-                              CrossAxisAlignment.start,
-                              children: [
-                                weatherText(weatherData.weatherInfo.name, 22),
-                                weatherText(weatherData.currentWeather.main_temp.toString() +' °C', 28),
-                                weatherText(weatherData.currentWeather.weather_main, 22),
-                              ],
-                            ),
-                          )),
-                      Column(
-                        children: [
-                          CustomContainer(
-                              child: Padding(
-                                  padding: const EdgeInsets.all(5),
-                                  child: Row(
-                                    children: [
-                                      weatherData.currentWeather.snow_1h == 0 ?
-                                      const Icon(
-                                          Icons.water_drop_outlined) :
-                                      const Icon(
-                                          Icons.snowing),
-                                      weatherText(
-                                          weatherData.currentWeather.snow_1h == 0 ? weatherData.currentWeather.rain_1h.toString()  + ' mm' :
-                                          weatherData.currentWeather.snow_1h.toString()
-                                              + ' mm', 15)
-                                    ],
-                                  ))),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          CustomContainer(
-                              child: Padding(
-                                  padding: const EdgeInsets.all(5),
-                                  child: Row(
-                                    children: [
-                                      const Icon(Icons.air),
-                                      weatherText(weatherData.currentWeather.wind_speed.toString() + ' m/s', 15)
-                                    ],
-                                  ))),
-                        ],
-                      )
-                    ],
-                  ),
-                  //min and max temps
-                  SizedBox(
-                    width: double.infinity,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CustomContainer(
-                            child: Padding(
-                                padding: const EdgeInsets.all(5),
-                                child: Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.thermostat,
-                                      color: Colors.blue,
-                                    ),
-                                    weatherText(weatherData.currentWeather.main_temp_min.toString() + ' °C', 15)
-                                  ],
-                                ))),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        CustomContainer(
-                            child: Padding(
-                                padding: const EdgeInsets.all(5),
-                                child: Row(
-                                  children: [
-                                    const Icon(Icons.thermostat,
-                                        color: Colors.red),
-                                    weatherText(weatherData.currentWeather.main_temp_max.toString() + ' °C', 15)
-                                  ],
-                                )
-                            )
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
+                  mainStats(weatherData),
                   //hourly forecast
                   CustomChart(
                       weatherData: weatherData,
@@ -261,6 +172,103 @@ class WeatherMainScreenState extends State<WeatherMainScreen> {
               ),
             ),
           )),
+    );
+  }
+
+  Widget mainStats(weatherData){
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            CustomContainer(
+                child: Padding(
+                  padding: const EdgeInsets.all(5),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment:
+                    CrossAxisAlignment.start,
+                    children: [
+                      weatherText(weatherData.weatherInfo.name, 22),
+                      weatherText(weatherData.currentWeather.main_temp.toString() +' °C', 28),
+                      weatherText(weatherData.currentWeather.weather_main, 22),
+                    ],
+                  ),
+                )),
+            Column(
+              children: [
+                CustomContainer(
+                    child: Padding(
+                        padding: const EdgeInsets.all(5),
+                        child: Row(
+                          children: [
+                            weatherData.currentWeather.snow_1h == 0 ?
+                            const Icon(
+                                Icons.water_drop_outlined) :
+                            const Icon(
+                                Icons.snowing),
+                            weatherText(
+                                weatherData.currentWeather.snow_1h == 0 ? weatherData.currentWeather.rain_1h.toString()  + ' mm' :
+                                weatherData.currentWeather.snow_1h.toString()
+                                    + ' mm', 15)
+                          ],
+                        ))),
+                const SizedBox(
+                  height: 5,
+                ),
+                CustomContainer(
+                    child: Padding(
+                        padding: const EdgeInsets.all(5),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.air),
+                            weatherText(weatherData.currentWeather.wind_speed.toString() + ' m/s', 15)
+                          ],
+                        ))),
+              ],
+            )
+          ],
+        ),
+        //min and max temps
+        SizedBox(
+          width: double.infinity,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CustomContainer(
+                  child: Padding(
+                      padding: const EdgeInsets.all(5),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.thermostat,
+                            color: Colors.blue,
+                          ),
+                          weatherText(weatherData.currentWeather.main_temp_min.toString() + ' °C', 15)
+                        ],
+                      ))),
+              const SizedBox(
+                width: 5,
+              ),
+              CustomContainer(
+                  child: Padding(
+                      padding: const EdgeInsets.all(5),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.thermostat,
+                              color: Colors.red),
+                          weatherText(weatherData.currentWeather.main_temp_max.toString() + ' °C', 15)
+                        ],
+                      )
+                  )
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(
+          height: 5,
+        ),
+      ],
     );
   }
 

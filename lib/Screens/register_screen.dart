@@ -1,3 +1,4 @@
+import 'package:aurora_borealis/Network_Responses/auth.dart';
 import 'package:flutter/material.dart';
 import '../Components/custom_form_field.dart';
 import '../Components/ext_string.dart';
@@ -19,6 +20,8 @@ class RegisterScreenState extends State<RegisterScreen> {
   final lastNameController = TextEditingController();
   final passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -119,14 +122,17 @@ class RegisterScreenState extends State<RegisterScreen> {
                                 onPressed: () async {
                                   if (_formKey.currentState!.validate()) {
                                     print(emailController.text + " " + passwordController.text);
-                                    var response = await Auth().register(emailController.text, firstNameController.text, lastNameController.text, passwordController.text);
-                                    if (response.statusCode == 201){
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
-                                    }
-                                    else {
-                                      //TODO error message
-                                    }
-                                    //change screen
+                                    setState(() {
+                                      isLoading = true;
+                                    });
+                                    await Auth.register(emailController.text,
+                                        firstNameController.text,
+                                        lastNameController.text,
+                                        passwordController.text, context);
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+
                                   }
                                   else {
 
@@ -172,7 +178,8 @@ class RegisterScreenState extends State<RegisterScreen> {
                 ),
               )
             ),
-          )
+          ),
+          isLoading ? const Center(child: CircularProgressIndicator(),) : Container(),
         ],
       ),
     );
