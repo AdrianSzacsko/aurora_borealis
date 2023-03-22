@@ -14,13 +14,20 @@ class Auth {
 
     if (response == null){
       errorResponseBar("Connection Error", context);
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context){
+        return const MenuScreen();
+      }));
       return;
     }
 
     if (response.statusCode == 200){
-      SharedPreferences shared = await SharedPreferences.getInstance();
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const MenuScreen(),
-          settings: RouteSettings(arguments: shared.getInt('user_id'))));
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context){
+        return const MenuScreen();
+      }), (r){
+        return false;
+      });
+      /*Navigator.push(context, MaterialPageRoute(builder: (context) => const MenuScreen(),
+          settings: RouteSettings(arguments: shared.getInt('user_id'))));*/
     }
     else {
       errorResponseBar("Something went wrong", context);

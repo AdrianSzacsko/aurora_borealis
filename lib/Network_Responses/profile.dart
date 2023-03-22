@@ -1,5 +1,9 @@
 import 'package:aurora_borealis/Network/profile.dart';
 import 'package:aurora_borealis/Network_Responses/farms.dart';
+import 'package:flutter/material.dart';
+
+import '../Components/snackbar.dart';
+import '../Screens/menu_screen.dart';
 
 
 class Profile{
@@ -19,17 +23,32 @@ class Profile{
     picture_path = "";
   }
 
-  static Future<Profile> create(int id) async {
+  static Future<Profile> create(int id, context) async {
     var component = Profile._create(id);
 
     var response = await ProfileNetwork().getProfile(id);
+
+    if (response == null){
+      errorResponseBar("Connection Error", context);
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context){
+        return const MenuScreen();
+      }));
+    }
 
     if (response.statusCode == 200){
       component.fromJson(response.data);
       component.init = true;
     }
-    else {
+    else if (response.statusCode == 401){
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context){
+        return const MenuScreen();
+      }), (r){
+        return false;
+      });
+    }
+    else{
       component.init = false;
+      errorResponseBar("Something went wrong", context);
     }
 
     return component;

@@ -10,12 +10,16 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mime_type/mime_type.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'custom_interceptor.dart';
+
 class ProfileNetwork with ChangeNotifier {
   Future<dynamic> getProfile(int profileId) async {
     Response response;
 
     var dio = Dio();
+    dio.interceptors.add(CustomInterceptor());
     dio.options.headers['content-Type'] = 'application/json';
+    dio.options.connectTimeout = const Duration(seconds: 5);
 
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
@@ -37,7 +41,9 @@ class ProfileNetwork with ChangeNotifier {
     Response response;
 
     var dio = Dio();
+    dio.interceptors.add(CustomInterceptor());
     dio.options.headers['content-Type'] = 'application/json';
+    dio.options.connectTimeout = const Duration(seconds: 5);
 
     //final prefs = await SharedPreferences.getInstance();
     //final token = prefs.getString('token') ?? '';
@@ -59,7 +65,9 @@ class ProfileNetwork with ChangeNotifier {
     Response response;
 
     var dio = Dio();
+    dio.interceptors.add(CustomInterceptor());
     dio.options.headers['content-Type'] = 'application/json';
+    dio.options.connectTimeout = const Duration(seconds: 5);
 
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
@@ -95,7 +103,9 @@ class ProfileNetwork with ChangeNotifier {
     Response response;
 
     var dio = Dio();
+    dio.interceptors.add(CustomInterceptor());
     dio.options.headers['content-Type'] = 'image.' + filetype;
+    dio.options.connectTimeout = const Duration(seconds: 5);
 
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';

@@ -1,6 +1,8 @@
 import 'package:aurora_borealis/Components/custom_navigator.dart';
+import 'package:aurora_borealis/Screens/menu_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'Screens/login_screen.dart';
 import 'constants.dart';
 import 'package:geolocator/geolocator.dart';
@@ -45,7 +47,7 @@ class _MyAppState extends State<MyApp> {
             textTheme: GoogleFonts.robotoTextTheme(
               Theme.of(context).textTheme,)
         ),
-        home: const LoginScreen(),
+        home: const MenuScreen(),
       );
   }
 }

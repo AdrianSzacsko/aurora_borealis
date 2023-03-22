@@ -199,7 +199,7 @@ class MySearchDelegate extends SearchDelegate<String> {
     // For example, you can use a ListView to display a list of search results.
 
     return FutureBuilder(
-      future: SearchResults.search(query),
+      future: SearchResults.search(query, context),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
 
         if (snapshot.hasData){
@@ -232,7 +232,7 @@ class MySearchDelegate extends SearchDelegate<String> {
     // This is where you can display suggestions as the user types in the search query.
     // For example, you can use a ListView to display a list of suggestions.
     return FutureBuilder(
-      future: FarmsList.create(),
+      future: FarmsList.create(context),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
 
         if (snapshot.hasData){

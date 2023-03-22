@@ -59,10 +59,11 @@ class ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             FutureBuilder(
-                future: Profile.create(user_id),
+                future: Profile.create(user_id, context),
                 builder:
                     (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                   if (snapshot.hasData) {
+                    print(snapshot.data);
                     Profile profile = snapshot.data as Profile;
                     bool myProfile = user_id == profile.id;
                     generateMarkers(profile.farms);
@@ -373,9 +374,11 @@ class _ImageDialogState extends State<ImageDialog> {
                         maxHeight: 4000,
                         maxWidth: 4000,
                       );
-                      setState(() {
-                        isPicked = true;
-                      });
+                      if (image != null) {
+                        setState(() {
+                          isPicked = true;
+                        });
+                      }
                     },
                     child: const Text("Choose new"),
                   )

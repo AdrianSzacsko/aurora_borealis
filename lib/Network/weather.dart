@@ -4,12 +4,16 @@ import 'package:aurora_borealis/key.dart';
 //import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 
+import 'custom_interceptor.dart';
+
 class WeatherNetwork with ChangeNotifier {
   Future<dynamic> getCurrentWeather(double lat, double long) async {
     Response response;
 
     var dio = Dio();
+    dio.interceptors.add(CustomInterceptor());
     dio.options.headers['content-Type'] = 'application/json';
+    dio.options.connectTimeout = const Duration(seconds: 5);
 
     //final prefs = await SharedPreferences.getInstance();
     //final token = prefs.getString('token') ?? '';
@@ -30,7 +34,9 @@ class WeatherNetwork with ChangeNotifier {
     Response response;
 
     var dio = Dio();
+    dio.interceptors.add(CustomInterceptor());
     dio.options.headers['content-Type'] = 'application/json';
+    dio.options.connectTimeout = const Duration(seconds: 5);
 
     //final prefs = await SharedPreferences.getInstance();
     //final token = prefs.getString('token') ?? '';
@@ -52,7 +58,9 @@ class WeatherNetwork with ChangeNotifier {
     Response response;
 
     var dio = Dio();
+    dio.interceptors.add(CustomInterceptor());
     dio.options.headers['content-Type'] = 'application/json';
+    dio.options.connectTimeout = const Duration(seconds: 5);
 
     //final prefs = await SharedPreferences.getInstance();
     //final token = prefs.getString('token') ?? '';
@@ -74,7 +82,9 @@ class WeatherNetwork with ChangeNotifier {
     Response response;
 
     var dio = Dio();
+    dio.interceptors.add(CustomInterceptor());
     dio.options.headers['content-Type'] = 'application/json';
+    dio.options.connectTimeout = const Duration(seconds: 5);
 
     //final prefs = await SharedPreferences.getInstance();
     //final token = prefs.getString('token') ?? '';

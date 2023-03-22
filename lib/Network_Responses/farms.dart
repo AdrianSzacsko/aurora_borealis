@@ -1,5 +1,9 @@
 import 'package:aurora_borealis/Network/farm.dart';
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
+
+import '../Components/snackbar.dart';
+import '../Screens/menu_screen.dart';
 
 part 'farms.g.dart';
 
@@ -22,13 +26,28 @@ class FarmsList{
 
   FarmsList._create();
 
-  static Future<FarmsList> create() async {
+  static Future<FarmsList> create(context) async {
     var component = FarmsList._create();
 
     var response = await FarmNetwork().getFarms();
 
+    if (response == null){
+      errorResponseBar("Connection Error", context);
+      return component;
+    }
+
     if (response.statusCode == 200){
       component.fromJson(response.data);
+    }
+    else if (response.statusCode == 401){
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context){
+        return const MenuScreen();
+      }), (r){
+        return false;
+      });
+    }
+    else{
+      errorResponseBar("Something went wrong", context);
     }
 
     return component;

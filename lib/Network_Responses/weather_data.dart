@@ -1,5 +1,9 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../Components/snackbar.dart';
+import '../Screens/menu_screen.dart';
 import 'weather.dart';
 import 'package:aurora_borealis/Network/weather.dart';
 
@@ -19,7 +23,7 @@ class WeatherData {
   }
 
   /// Public factory
-  static Future<WeatherData> create(double lat, double long) async {
+  static Future<WeatherData> create(double lat, double long, context) async {
 
     // Call the private constructor
     var component = WeatherData._create(lat, long);
@@ -29,10 +33,28 @@ class WeatherData {
     var responseDaily = await WeatherNetwork().getDailyWeather(lat, long);
 
 
+    if (responseCurr == null || responseHourly == null || responseDaily == null){
+      errorResponseBar("Connection Error", context);
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context){
+        return const MenuScreen();
+      }));
+    }
+
     if (responseCurr.statusCode == 200 && responseHourly.statusCode == 200 &&
     responseDaily.statusCode == 200) {
       component.fromJson(responseCurr.data, responseHourly.data, responseDaily.data);
 
+    }
+    else if (responseCurr.statusCode == 401 || responseHourly.statusCode == 401 ||
+        responseDaily.statusCode == 401){
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context){
+        return const MenuScreen();
+      }), (r){
+        return false;
+      });
+    }
+    else{
+      errorResponseBar("Something went wrong", context);
     }
 
 

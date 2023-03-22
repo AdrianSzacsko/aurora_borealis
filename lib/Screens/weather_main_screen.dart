@@ -96,7 +96,7 @@ class WeatherMainScreenState extends State<WeatherMainScreen> {
           ),
 
         FutureBuilder(
-          future: Future.microtask(() => WeatherData.create(currentPosition.latitude, currentPosition.longitude)),
+          future: Future.microtask(() => WeatherData.create(currentPosition.latitude, currentPosition.longitude, context)),
           builder: (
               BuildContext context,
               AsyncSnapshot<dynamic> snapshot

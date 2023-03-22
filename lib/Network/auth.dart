@@ -3,6 +3,7 @@
 */
 
 
+import 'package:aurora_borealis/Network/custom_interceptor.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:flutter/foundation.dart';
 import '../key.dart';
@@ -14,6 +15,7 @@ class AuthNetwork with ChangeNotifier {
   register(String email, String firstname, String lastname, String password) async {
     var response;
     var dio = Dio();
+    dio.interceptors.add(CustomInterceptor());
     dio.options.connectTimeout = const Duration(seconds: 5);
     // dio.options.headers['Authorization'] = 'Bearer '+ token;
     // dio.options.headers['Content-Type'] = 'application/json';
@@ -37,6 +39,7 @@ class AuthNetwork with ChangeNotifier {
   login(String email, String password) async {
     Response response;
     var dio = Dio();
+    dio.interceptors.add(CustomInterceptor());
     dio.options.headers['content-Type'] = "application/x-www-form-urlencoded";
     dio.options.connectTimeout = const Duration(seconds: 5);
     try {

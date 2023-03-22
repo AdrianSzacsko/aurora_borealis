@@ -1,5 +1,9 @@
 import 'package:aurora_borealis/Network/weather.dart';
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
+
+import '../Components/snackbar.dart';
+import '../Screens/menu_screen.dart';
 
 part 'search_results.g.dart';
 
@@ -7,11 +11,29 @@ class SearchResults{
 
   SearchResults();
 
-  static Future<List<SearchResult>> search(String search) async {
+  static Future<List<SearchResult>> search(String search, context) async {
     List<SearchResult> list = [];
     var response = await WeatherNetwork().getSearch(search);
+
+    if (response == null){
+      errorResponseBar("Connection Error", context);
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context){
+        return const MenuScreen();
+      }));
+    }
+
     if (response.statusCode == 200){
       list = _createList(response.data);
+    }
+    else if (response.statusCode == 401){
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context){
+        return const MenuScreen();
+      }), (r){
+        return false;
+      });
+    }
+    else{
+      errorResponseBar("Something went wrong", context);
     }
 
     return list;
