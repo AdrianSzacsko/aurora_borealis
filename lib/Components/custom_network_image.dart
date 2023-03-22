@@ -5,8 +5,9 @@ import '../key.dart';
 
 class CustomNetworkImage extends StatelessWidget{
   final String url;
+  double? radius = 50;
 
-  const CustomNetworkImage({Key? key, required this.url}) : super(key: key);
+  CustomNetworkImage({Key? key, required this.url, this.radius}) : super(key: key);
 
 
 
@@ -22,23 +23,78 @@ class CustomNetworkImage extends StatelessWidget{
                 child: Image.network(
                   '$url?${DateTime.now().millisecondsSinceEpoch.toString()}',
                   headers: {'authorization': 'Bearer ' + snapshot.data.getString('token')},
-                  width: 100,
-                  height: 100,
+                  width: radius! * 2,
+                  height: radius! * 2,
                   fit: BoxFit.fill,
                   errorBuilder: (context, error, stackTrace) {
                     return const Icon(Icons.image_not_supported, size: 50,);
                   },
+                  loadingBuilder: (context, child, loadingProgress){
+                    if(loadingProgress == null) {
+                      return child;
+                    }
+
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  },
                 ),
               ),
-              radius: 50,
+              radius: radius,
             );
           }
           else if (snapshot.hasError){
-            return const CircleAvatar(
-              child: Icon(Icons.account_circle),
-              radius: 50,
+            return CircleAvatar(
+              child: const Icon(Icons.account_circle),
+              radius: radius,
             );
           }
+          else {
+            return const Center(child: CircularProgressIndicator(),);
+          }
+        }
+    );
+  }
+
+}
+
+class CustomNetworkPostImage extends StatelessWidget{
+  final String url;
+
+  const CustomNetworkPostImage({Key? key, required this.url}) : super(key: key);
+
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+        future: SharedPreferences.getInstance(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            return Image.network(
+              url,
+              headers: {'authorization': 'Bearer ' + snapshot.data.getString('token')},
+              fit: BoxFit.fitHeight,
+              errorBuilder: (context, error, stackTrace) {
+                return const Icon(Icons.image_not_supported, size: 50,);
+              },
+              loadingBuilder: (context, child, loadingProgress){
+                if(loadingProgress == null) {
+                  return child;
+                }
+
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
+            );
+          }
+          /*else if (snapshot.hasError){
+            return CircleAvatar(
+              child: const Icon(Icons.account_circle),
+            );
+          }*/
           else {
             return const Center(child: CircularProgressIndicator(),);
           }

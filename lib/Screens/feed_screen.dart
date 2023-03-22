@@ -1,5 +1,7 @@
 import 'package:aurora_borealis/Components/custom_chart.dart';
 import 'package:aurora_borealis/Components/custom_map.dart';
+import 'package:aurora_borealis/Components/custom_network_image.dart';
+import 'package:aurora_borealis/Components/post_item.dart';
 import 'package:aurora_borealis/Network_Responses/weather.dart';
 import 'package:aurora_borealis/constants.dart';
 import 'package:flutter/material.dart';
@@ -23,12 +25,10 @@ class FeedScreen extends StatefulWidget {
   FeedScreenState createState() => FeedScreenState();
 }
 
-class FeedScreenState extends State<FeedScreen>{
-
+class FeedScreenState extends State<FeedScreen> {
   MapController mapController = MapController();
   late latLng.LatLng currentPosition;
   int user_id = 0;
-
 
   Future<void> _getCurrentLocation() async {
     final status = await Geolocator.checkPermission();
@@ -38,8 +38,7 @@ class FeedScreenState extends State<FeedScreen>{
 
     final position = await Geolocator.getCurrentPosition();
     setState(() {
-      currentPosition = latLng.LatLng(position.latitude,
-          position.longitude);
+      currentPosition = latLng.LatLng(position.latitude, position.longitude);
     });
   }
 
@@ -49,23 +48,21 @@ class FeedScreenState extends State<FeedScreen>{
     _getCurrentLocation();
   }
 
-
   @override
   Widget build(BuildContext context) {
-    if (ModalRoute
-        .of(context)!
-        .settings
-        .arguments == null) {
+    if (ModalRoute.of(context)!.settings.arguments == null) {
       return const NotLoggedInScreen();
     } else {
-      user_id = ModalRoute
-          .of(context)!
-          .settings
-          .arguments as int;
+      user_id = ModalRoute.of(context)!.settings.arguments as int;
 
       return Scaffold(
         resizeToAvoidBottomInset: true,
         appBar: myAppBar(context),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {  },
+          child: const Icon(Icons.add_rounded),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
         body: Stack(
           fit: StackFit.expand,
           children: [
@@ -96,11 +93,11 @@ class FeedScreenState extends State<FeedScreen>{
             },
           ),*/
 
+            const PostItem(),
 
           ],
         ),
       );
     }
   }
-
 }
