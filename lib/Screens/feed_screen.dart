@@ -28,10 +28,27 @@ class FeedScreen extends StatefulWidget {
 class FeedScreenState extends State<FeedScreen> {
   MapController mapController = MapController();
   late PageController _pageController;
+  List<ScrollController> scrollControllers = [ScrollController(), ScrollController(), ScrollController()]; //TODO move this into the futureBuilder
+  bool _shouldScrollToNextPage = false;
+  bool _shouldScrollToPrevPage = true;
   late latLng.LatLng currentPosition;
   int user_id = 0;
 
   int activePage = 1;
+
+  _scrollDown() async {
+    await _pageController.nextPage(
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.linear,
+    );
+  }
+
+  _scrollUp() async {
+    await _pageController.previousPage(
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.linear,
+    );
+  }
 
   Future<void> _getCurrentLocation() async {
     final status = await Geolocator.checkPermission();
@@ -49,7 +66,7 @@ class FeedScreenState extends State<FeedScreen> {
   void initState() {
     super.initState();
     _getCurrentLocation();
-    _pageController = PageController(viewportFraction: 0.8);
+    _pageController = PageController(viewportFraction: 0.9);
   }
 
   @override
@@ -100,6 +117,7 @@ class FeedScreenState extends State<FeedScreen> {
                 alignment: Alignment.bottomCenter,
                 child: Container(
                     width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height * 0.59,
                     decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.7),
                         image: DecorationImage(
@@ -113,26 +131,81 @@ class FeedScreenState extends State<FeedScreen> {
                         borderRadius: const BorderRadius.only(
                             topRight: Radius.circular(40),
                             topLeft: Radius.circular(40))),
-                    child: SingleChildScrollView(
-                        child: Padding(
+                    child: Padding(
                           padding: const EdgeInsets.only(top: 10, right: 5, left: 5),
                           child: SizedBox(
                             width: MediaQuery.of(context).size.width,
                             child: PageView.builder(
-                                itemCount: 1,
+                              padEnds: false,
+                                itemCount: 3,
                                 pageSnapping: true,
                                 controller: _pageController,
+                                scrollDirection: Axis.vertical,
                                 onPageChanged: (page) {
                                   setState(() {
                                     activePage = page;
                                   });
                                 },
                                 itemBuilder: (context, pagePosition) {
-                                  return const PostItem();
+                                  return NotificationListener(
+                                      onNotification: (notification) {
+                                        //bool isStart = false;
+                                        if (notification is ScrollStartNotification){
+                                          if (scrollControllers[pagePosition].position.pixels == scrollControllers[pagePosition].position.maxScrollExtent){
+                                            _shouldScrollToNextPage = true;
+                                            //print( _shouldScrollToNextPage);
+                                          }
+                                          else if (scrollControllers[pagePosition].position.pixels == 0){
+                                            _shouldScrollToPrevPage = true;
+                                          }
+                                          else{
+                                            _shouldScrollToNextPage = false;
+                                            _shouldScrollToPrevPage = false;
+                                          }
+                                        }
+                                        if (notification is OverscrollNotification) {
+                                          if (notification.metrics.axis == Axis.vertical) {
+                                            if (notification.dragDetails != null) {
+                                              if (notification.dragDetails!.delta.dy < 0 && _shouldScrollToNextPage) {
+                                                _scrollDown();
+                                                _shouldScrollToNextPage = false;
+                                              }
+                                              else if (notification.dragDetails!.delta.dy > 0 && _shouldScrollToPrevPage) {
+                                                _scrollUp();
+                                              }
+                                            }
+                                          }
+                                        }
+                                        /*if (notification is ScrollEndNotification) {
+                                          if (scrollControllers[pagePosition].position.pixels == scrollControllers[pagePosition].position.maxScrollExtent) {
+                                            _shouldScrollToNextPage = true;
+                                            //print(_shouldScrollToNextPage);
+                                          } else {
+                                            _shouldScrollToNextPage = false;
+                                          }
+                                        }
+                                        if (notification is OverscrollNotification) {
+                                          if (notification.metrics.axis == Axis.vertical) {
+                                            print(_shouldScrollToNextPage);
+                                            if (notification.overscroll > 0 && _shouldScrollToNextPage) {
+                                              _scrollDown();
+                                              _shouldScrollToNextPage = false;
+                                            } else {
+                                              _scrollUp();
+                                              _shouldScrollToNextPage = false;
+                                            }
+                                          }
+                                        }*/
+                                        return false;
+                                      },
+                                        child: SingleChildScrollView(
+                                          controller: scrollControllers[pagePosition],
+                                            child: const PostItem()
+                                        ),
+                                    );
                                 }),
                           )
                         )
-                    )
                 )
             ),
           ],

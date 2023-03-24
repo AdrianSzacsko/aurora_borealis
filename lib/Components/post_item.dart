@@ -48,6 +48,16 @@ class _PostItemState extends State<PostItem> {
               ),
               const SizedBox(height: 10,),
               const Text("This is the post text what the user may insert, "
+                  "it could be a pretty long text with more than one line, maybe even 5-6 lines.This is the post text what the user may insert, "
+                  "it could be a pretty long text with more than one line, maybe even 5-6 lines.This is the post text what the user may insert, "
+                  "it could be a pretty long text with more than one line, maybe even 5-6 lines.This is the post text what the user may insert, "
+                  "it could be a pretty long text with more than one line, maybe even 5-6 lines.This is the post text what the user may insert, "
+                  "it could be a pretty long text with more than one line, maybe even 5-6 lines.This is the post text what the user may insert, "
+                  "it could be a pretty long text with more than one line, maybe even 5-6 lines.This is the post text what the user may insert, "
+                  "it could be a pretty long text with more than one line, maybe even 5-6 lines.This is the post text what the user may insert, "
+                  "it could be a pretty long text with more than one line, maybe even 5-6 lines.This is the post text what the user may insert, "
+                  "it could be a pretty long text with more than one line, maybe even 5-6 lines.This is the post text what the user may insert, "
+                  "it could be a pretty long text with more than one line, maybe even 5-6 lines.This is the post text what the user may insert, "
                   "it could be a pretty long text with more than one line, maybe even 5-6 lines.", style: TextStyle(
                   fontSize: 16
               ),
@@ -88,9 +98,10 @@ class _PostImageState extends State<PostImageItem> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 200,
+      height: MediaQuery.of(context).size.height * 0.3,
       width: MediaQuery.of(context).size.width,
       child:   PageView.builder(
+        padEnds: false,
           itemCount: images.length,
           pageSnapping: true,
           controller: _pageController,
