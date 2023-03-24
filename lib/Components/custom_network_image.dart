@@ -27,7 +27,7 @@ class CustomNetworkImage extends StatelessWidget{
                   height: radius! * 2,
                   fit: BoxFit.fill,
                   errorBuilder: (context, error, stackTrace) {
-                    return const Icon(Icons.image_not_supported, size: 50,);
+                    return Icon(Icons.image_not_supported, size: radius,);
                   },
                   loadingBuilder: (context, child, loadingProgress){
                     if(loadingProgress == null) {
@@ -46,7 +46,7 @@ class CustomNetworkImage extends StatelessWidget{
           else if (snapshot.hasError){
             return CircleAvatar(
               child: const Icon(Icons.account_circle),
-              radius: radius,
+              radius: radius! / 2,
             );
           }
           else {

@@ -27,8 +27,11 @@ class FeedScreen extends StatefulWidget {
 
 class FeedScreenState extends State<FeedScreen> {
   MapController mapController = MapController();
+  late PageController _pageController;
   late latLng.LatLng currentPosition;
   int user_id = 0;
+
+  int activePage = 1;
 
   Future<void> _getCurrentLocation() async {
     final status = await Geolocator.checkPermission();
@@ -46,6 +49,7 @@ class FeedScreenState extends State<FeedScreen> {
   void initState() {
     super.initState();
     _getCurrentLocation();
+    _pageController = PageController(viewportFraction: 0.8);
   }
 
   @override
@@ -92,9 +96,45 @@ class FeedScreenState extends State<FeedScreen> {
               }
             },
           ),*/
-
-            const PostItem(),
-
+            Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.7),
+                        image: DecorationImage(
+                          fit: BoxFit.fill,
+                          image: Image.asset(
+                            'assets/images/backgroundGreen.jpg',
+                          ).image,
+                          colorFilter: ColorFilter.mode(
+                              Colors.black.withOpacity(0.2), BlendMode.dstATop),
+                        ),
+                        borderRadius: const BorderRadius.only(
+                            topRight: Radius.circular(40),
+                            topLeft: Radius.circular(40))),
+                    child: SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 10, right: 5, left: 5),
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            child: PageView.builder(
+                                itemCount: 1,
+                                pageSnapping: true,
+                                controller: _pageController,
+                                onPageChanged: (page) {
+                                  setState(() {
+                                    activePage = page;
+                                  });
+                                },
+                                itemBuilder: (context, pagePosition) {
+                                  return const PostItem();
+                                }),
+                          )
+                        )
+                    )
+                )
+            ),
           ],
         ),
       );

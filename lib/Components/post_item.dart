@@ -15,73 +15,47 @@ class _PostItemState extends State<PostItem> {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-        alignment: Alignment.bottomCenter,
-        child: Container(
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.7),
-                image: DecorationImage(
-                  fit: BoxFit.fill,
-                  image: Image.asset(
-                    'assets/images/backgroundGreen.jpg',
-                  ).image,
-                  colorFilter: ColorFilter.mode(
-                      Colors.black.withOpacity(0.2), BlendMode.dstATop),
-                ),
-                borderRadius: const BorderRadius.only(
-                    topRight: Radius.circular(40),
-                    topLeft: Radius.circular(40))),
-            child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 20, right: 16, left: 16),
-                  child: Column(
-                    children: [
-                      //post
-                      CustomContainer(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  CustomNetworkImage(
-                                    url: "https://newprofilepic2.photo-cdn.net//assets/images/article/profile.jpg",
-                                    radius: 25,
-                                  ),
-                                  const SizedBox(width: 10,),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: const [
-                                      Text("FirstName LastName", style: TextStyle(
-                                        fontSize: 18,
-                                      ),
-                                      ),
-                                      Text("2023.03.22", style: TextStyle(
-                                        fontSize: 11,
-                                        color: Colors.grey,
-                                      ),
-                                      )
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 10,),
-                              const Text("This is the post text what the user may insert, "
-                                  "it could be a pretty long text with more than one line, maybe even 5-6 lines.", style: TextStyle(
-                                  fontSize: 16
-                              ),
-                              ),
-                              const SizedBox(height: 10,),
-                              const PostImageItem(),
-                            ],
-                          )
+    return CustomContainer(
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  CustomNetworkImage(
+                    url: "https://newprofilepic2.photo-cdn.net//assets/images/article/profile.jpg",
+                    radius: 25,
+                  ),
+                  const SizedBox(width: 10,),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Text("FirstName LastName", style: TextStyle(
+                        fontSize: 18,
+                      ),
+                      ),
+                      Text("2023.03.22", style: TextStyle(
+                        fontSize: 11,
+                        color: Colors.grey,
+                      ),
                       )
                     ],
                   ),
-                )
-            )
+                ],
+              ),
+              const SizedBox(height: 10,),
+              const Text("This is the post text what the user may insert, "
+                  "it could be a pretty long text with more than one line, maybe even 5-6 lines.", style: TextStyle(
+                  fontSize: 16
+              ),
+              ),
+              const SizedBox(height: 10,),
+              const PostImageItem(),
+            ],
+          ),
         )
     );
   }
