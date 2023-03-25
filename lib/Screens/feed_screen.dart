@@ -80,7 +80,11 @@ class FeedScreenState extends State<FeedScreen> {
         resizeToAvoidBottomInset: true,
         appBar: myAppBar(context),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {  },
+          onPressed: () async {
+            await showDialog(context: context, builder: (context){
+              return PostDialog();
+            });
+          },
           child: const Icon(Icons.add_rounded),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
@@ -176,26 +180,6 @@ class FeedScreenState extends State<FeedScreen> {
                                             }
                                           }
                                         }
-                                        /*if (notification is ScrollEndNotification) {
-                                          if (scrollControllers[pagePosition].position.pixels == scrollControllers[pagePosition].position.maxScrollExtent) {
-                                            _shouldScrollToNextPage = true;
-                                            //print(_shouldScrollToNextPage);
-                                          } else {
-                                            _shouldScrollToNextPage = false;
-                                          }
-                                        }
-                                        if (notification is OverscrollNotification) {
-                                          if (notification.metrics.axis == Axis.vertical) {
-                                            print(_shouldScrollToNextPage);
-                                            if (notification.overscroll > 0 && _shouldScrollToNextPage) {
-                                              _scrollDown();
-                                              _shouldScrollToNextPage = false;
-                                            } else {
-                                              _scrollUp();
-                                              _shouldScrollToNextPage = false;
-                                            }
-                                          }
-                                        }*/
                                         return false;
                                       },
                                         child: SingleChildScrollView(
@@ -212,5 +196,33 @@ class FeedScreenState extends State<FeedScreen> {
         ),
       );
     }
+  }
+}
+
+class PostDialog extends StatefulWidget {
+
+  const PostDialog({Key? key}) : super(key: key);
+
+  @override
+  _PostDialogState createState() => _PostDialogState();
+}
+
+class _PostDialogState extends State<PostDialog> {
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(25),
+      ),
+      alignment: Alignment.center,
+      title: const Text("Add post"),
+      content: Container(
+          width: MediaQuery.of(context).size.width,
+        child: SingleChildScrollView(
+          child: PostNewItem(),
+        )
+      ),
+    );
   }
 }

@@ -334,7 +334,7 @@ class FarmListTile extends ListTile {
 class ImageDialog extends StatefulWidget {
   final Profile profile;
 
-  ImageDialog(this.profile);
+  const ImageDialog(this.profile, {Key? key}) : super(key: key);
 
   @override
   _ImageDialogState createState() => _ImageDialogState();

@@ -64,9 +64,6 @@ class CustomNetworkPostImage extends StatelessWidget{
 
   const CustomNetworkPostImage({Key? key, required this.url}) : super(key: key);
 
-
-
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
