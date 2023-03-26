@@ -6,9 +6,9 @@ import '../key.dart';
 
 class CustomNetworkImage extends StatelessWidget{
   final String url;
-  double? radius = 50;
+  final double radius;
 
-  CustomNetworkImage({Key? key, required this.url, this.radius}) : super(key: key);
+  const CustomNetworkImage({Key? key, required this.url, required this.radius}) : super(key: key);
 
 
 
@@ -24,8 +24,8 @@ class CustomNetworkImage extends StatelessWidget{
                 child: Image.network(
                   '$url?${DateTime.now().millisecondsSinceEpoch.toString()}',
                   headers: {'authorization': 'Bearer ' + snapshot.data.getString('token')},
-                  width: radius! * 2,
-                  height: radius! * 2,
+                  width: radius * 2,
+                  height: radius * 2,
                   fit: BoxFit.fill,
                   errorBuilder: (context, error, stackTrace) {
                     return Icon(Icons.image_not_supported, size: radius,);
@@ -47,7 +47,7 @@ class CustomNetworkImage extends StatelessWidget{
           else if (snapshot.hasError){
             return CircleAvatar(
               child: const Icon(Icons.account_circle),
-              radius: radius! / 2,
+              radius: radius / 2,
             );
           }
           else {

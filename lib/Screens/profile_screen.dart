@@ -53,9 +53,9 @@ class ProfileScreenState extends State<ProfileScreen> {
                 mapController: _mapController,
                 //coors: latLng.LatLng(48.269798, 19.820565),
                 onLongPress: null,
-                markerLayer: MarkerLayer(
-                  markers: markers,
-                ),
+                  markerLayer: MarkerLayer(
+                    markers: markers,
+                  )
               ),
             ),
             FutureBuilder(
@@ -101,6 +101,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                                               url: urlKey +
                                                   'profile/profile_pic/' +
                                                   profile.id.toString(),
+                                              radius: 50,
                                             ),
                                             myProfile
                                                 ? Container(
@@ -361,6 +362,7 @@ class _ImageDialogState extends State<ImageDialog> {
                     url: urlKey +
                         'profile/profile_pic/' +
                         widget.profile.id.toString(),
+                        radius: 50,
                   )
                 : CircleAvatar(
                     backgroundImage: FileImage(File(image!.path)),
@@ -455,9 +457,9 @@ class MapDialog {
                           child: CustomMap(
                             mapController: mapController,
                             onLongPress: onLongPress,
-                            markerLayer: MarkerLayer(
-                              markers: markers,
-                            ),
+                              markerLayer: MarkerLayer(
+                                markers: markers,
+                              )
                           ),
                         ),
                         FilledButton(

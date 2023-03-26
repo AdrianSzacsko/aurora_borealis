@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:aurora_borealis/Network_Responses/post.dart';
 import 'package:aurora_borealis/constants.dart';
+import 'package:aurora_borealis/key.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:readmore/readmore.dart';
@@ -9,7 +11,8 @@ import 'custom_network_image.dart';
 import 'oval_component.dart';
 
 class PostItem extends StatefulWidget {
-  const PostItem({Key? key}) : super(key: key);
+  final Post post;
+  const PostItem({Key? key, required this.post}) : super(key: key);
 
   @override
   _PostItemState createState() => _PostItemState();
@@ -29,7 +32,9 @@ class _PostItemState extends State<PostItem> {
             children: [
               CustomNetworkImage(
                 url:
-                    "https://newprofilepic2.photo-cdn.net//assets/images/article/profile.jpg",
+                urlKey +
+                    'profile/profile_pic/' +
+                    widget.post.user_id.toString(),
                 radius: 25,
               ),
               const SizedBox(
@@ -38,16 +43,16 @@ class _PostItemState extends State<PostItem> {
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
-                    "FirstName LastName",
-                    style: TextStyle(
+                    widget.post.first_name + " " + widget.post.last_name,
+                    style: const TextStyle(
                       fontSize: 18,
                     ),
                   ),
                   Text(
-                    "2023.03.22",
-                    style: TextStyle(
+                    widget.post.date.year.toString() + "." + widget.post.date.month.toString() + "." + widget.post.date.day.toString(),
+                    style: const TextStyle(
                       fontSize: 11,
                       color: Colors.grey,
                     ),
@@ -60,18 +65,7 @@ class _PostItemState extends State<PostItem> {
             height: 10,
           ),
           ReadMoreText(
-            "This is the post text what the user may insert, "
-            "it could be a pretty long text with more than one line, maybe even 5-6 lines.This is the post text what the user may insert, "
-            "it could be a pretty long text with more than one line, maybe even 5-6 lines.This is the post text what the user may insert, "
-            "it could be a pretty long text with more than one line, maybe even 5-6 lines.This is the post text what the user may insert, "
-            "it could be a pretty long text with more than one line, maybe even 5-6 lines.This is the post text what the user may insert, "
-            "it could be a pretty long text with more than one line, maybe even 5-6 lines.This is the post text what the user may insert, "
-            "it could be a pretty long text with more than one line, maybe even 5-6 lines.This is the post text what the user may insert, "
-            "it could be a pretty long text with more than one line, maybe even 5-6 lines.This is the post text what the user may insert, "
-            "it could be a pretty long text with more than one line, maybe even 5-6 lines.This is the post text what the user may insert, "
-            "it could be a pretty long text with more than one line, maybe even 5-6 lines.This is the post text what the user may insert, "
-            "it could be a pretty long text with more than one line, maybe even 5-6 lines.This is the post text what the user may insert, "
-            "it could be a pretty long text with more than one line, maybe even 5-6 lines.",
+            widget.post.text,
             style: const TextStyle(fontSize: 16),
             trimLines: 3,
             trimMode: TrimMode.Line,
@@ -82,7 +76,7 @@ class _PostItemState extends State<PostItem> {
           const SizedBox(
             height: 10,
           ),
-          const PostImageItem(),
+          PostImageItem(images: widget.post.photos_id,),
         ],
       ),
     ));
@@ -174,7 +168,8 @@ class _PostNewItemState extends State<PostNewItem> {
 }
 
 class PostImageItem extends StatefulWidget {
-  const PostImageItem({Key? key}) : super(key: key);
+  final List<int> images;
+  const PostImageItem({Key? key, required this.images}) : super(key: key);
 
   @override
   _PostImageState createState() => _PostImageState();
@@ -183,11 +178,6 @@ class PostImageItem extends StatefulWidget {
 class _PostImageState extends State<PostImageItem> {
   int activePage = 1;
   late PageController _pageController;
-  List<String> images = [
-    "https://images.wallpapersden.com/image/download/purple-sunrise-4k-vaporwave_bGplZmiUmZqaraWkpJRmbmdlrWZlbWU.jpg",
-    "https://wallpaperaccess.com/full/2637581.jpg",
-    "https://uhdwallpapers.org/uploads/converted/20/01/14/the-mandalorian-5k-1920x1080_477555-mm-90.jpg"
-  ];
 
   @override
   void initState() {
@@ -198,11 +188,11 @@ class _PostImageState extends State<PostImageItem> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.3,
+      height: MediaQuery.of(context).size.height * 0.5,
       width: MediaQuery.of(context).size.width,
       child: PageView.builder(
           padEnds: false,
-          itemCount: images.length,
+          itemCount: widget.images.length,
           pageSnapping: true,
           controller: _pageController,
           onPageChanged: (page) {
@@ -214,7 +204,7 @@ class _PostImageState extends State<PostImageItem> {
             return Container(
                 margin: const EdgeInsets.only(left: 2, right: 2),
                 child: CustomNetworkPostImage(
-                  url: images[pagePosition],
+                  url: urlKey + "feed/post_pic/" + widget.images[pagePosition].toString(),
                 ));
           }),
     );

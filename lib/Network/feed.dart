@@ -12,8 +12,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'custom_interceptor.dart';
 
-class ProfileNetwork with ChangeNotifier {
-  Future<dynamic> getProfile(int profileId) async {
+class FeedNetwork with ChangeNotifier {
+  Future<dynamic> getFeed(double latitude, double longitude, int distance) async {
     Response response;
 
     var dio = Dio();
@@ -26,7 +26,11 @@ class ProfileNetwork with ChangeNotifier {
     dio.options.headers['authorization'] = "Bearer " + token;
 
     try {
-      response = await dio.get(urlKey + 'profile/' + profileId.toString());
+      response = await dio.get(urlKey + 'feed/', queryParameters: {
+        'distance_range': distance,
+        'latitude': latitude,
+        'longitude': longitude,
+      });
       return response;
     }
     on DioError catch (e) {
@@ -37,7 +41,7 @@ class ProfileNetwork with ChangeNotifier {
     return null;
   }
 
-  /*Future<dynamic> getSearch(String search) async {
+  Future<dynamic> newPost(double latitude, double longitude, String category, String text) async {
     Response response;
 
     var dio = Dio();
@@ -50,7 +54,12 @@ class ProfileNetwork with ChangeNotifier {
     //dio.options.headers['authorization'] = "Bearer " + token;
 
     try {
-      response = await dio.get(urlKey + 'weather/search/' + search);
+      response = await dio.post(urlKey + 'feed/new_post/', data: {
+        'latitude': latitude,
+        'longitude': longitude,
+        'category': category,
+        'text': text,
+      });
       return response;
     }
     on DioError catch (e) {
@@ -59,9 +68,9 @@ class ProfileNetwork with ChangeNotifier {
     }
 
     return null;
-  }*/
+  }
 
-  /*Future<dynamic> getProfilePic(int id) async {
+  /*Future<dynamic> getPostPic(int id) async {
     Response response;
 
     var dio = Dio();
@@ -74,7 +83,7 @@ class ProfileNetwork with ChangeNotifier {
     dio.options.headers['authorization'] = "Bearer " + token;
 
     try {
-      response = await dio.get(urlKey + 'profile/profile_pic/' + id.toString());
+      response = await dio.get(urlKey + 'feed/post_pic/' + id.toString());
       return response;
     }
     on DioError catch (e) {
@@ -85,26 +94,29 @@ class ProfileNetwork with ChangeNotifier {
     return null;
   }*/
 
-  Future<dynamic> putProfilePic(XFile? image) async {
-    final String? mimeType = mime(image!.path);
-    final File file = File(image.path);
-    print(mimeType.toString().split("/")[1]);
-    String filetype = mimeType.toString().split("/")[1];
+  Future<dynamic> postPostPic(int postId, List<XFile> images) async {
+    final formData = FormData();
+    for (var i = 0; i < images.length; i++) {
+      final String? mimeType = mime(images[i].path);
+      final File file = File(images[i].path);
+      print(mimeType.toString().split("/")[1]);
+      String filetype = mimeType.toString().split("/")[1];
 
-    final formData = FormData.fromMap({
-      'file': await MultipartFile.fromFile(
-        file.path,
-        filename: 'image.' + filetype,
-        contentType: MediaType('image', filetype),
-      ),
-    });
-
+      formData.files.add(MapEntry(
+        'files',
+        await MultipartFile.fromFile(
+          file.path,
+          filename: 'image$i.' + filetype,
+          contentType: MediaType('image', filetype),
+        ),
+      ));
+    }
 
     Response response;
 
     var dio = Dio();
     dio.interceptors.add(CustomInterceptor());
-    dio.options.headers['content-Type'] = 'image.' + filetype;
+    //dio.options.headers['content-Type'] = 'image.' + filetype;
     dio.options.connectTimeout = const Duration(seconds: 5);
 
     final prefs = await SharedPreferences.getInstance();
@@ -113,14 +125,21 @@ class ProfileNetwork with ChangeNotifier {
     dio.options.headers['responseType'] = ResponseType.plain;
 
     try {
-      response = await dio.put(urlKey + 'profile/pic', data: formData);
+      response = await dio.post(urlKey + 'feed/new_post_photos', data: {
+        'files': formData,
+        'post_id': postId,
+      });
+      /*response = await dio.post(
+        urlKey + 'new_post_photos',
+        data: formData,
+        queryParameters: {'post_id': postId},
+      );*/
       return response;
-    }
-    on DioError catch (e) {
-
+    } on DioError catch (e) {
       return e.response;
     }
 
     return null;
   }
+
 }

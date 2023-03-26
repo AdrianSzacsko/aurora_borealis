@@ -8,8 +8,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import '../Components/custom_form_field.dart';
 import '../Components/ext_string.dart';
+import '../Components/marker_shape.dart';
 import '../Components/not_logged_in.dart';
 import '../Components/oval_component.dart';
+import '../Network_Responses/feed.dart';
+import '../Network_Responses/post.dart';
 import 'register_screen.dart';
 import 'login_screen.dart';
 import '../Components/app_bar.dart';
@@ -35,6 +38,7 @@ class FeedScreenState extends State<FeedScreen> {
   int user_id = 0;
 
   int activePage = 1;
+  List<Marker> markers = [];
 
   _scrollDown() async {
     await _pageController.nextPage(
@@ -69,6 +73,21 @@ class FeedScreenState extends State<FeedScreen> {
     _pageController = PageController(viewportFraction: 0.9);
   }
 
+  void addMarker(latLng.LatLng point) {
+    markers.add(Marker(
+        point: point,
+        width: 150,
+        height: 70,
+        builder: (context) => CustomShape(child: const Icon(Icons.location_on_outlined))));
+  }
+
+  void generateMarkers(List<Post> points) {
+    markers.clear();
+    points.forEach((element) {
+      addMarker(latLng.LatLng(element.latitude, element.longitude));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     if (ModalRoute.of(context)!.settings.arguments == null) {
@@ -96,27 +115,11 @@ class FeedScreenState extends State<FeedScreen> {
               child: CustomMap(
                 mapController: mapController,
                 //coors: latLng.LatLng(currentPosition.latitude, currentPosition.longitude),
+                  markerLayer: MarkerLayer(
+                    markers: markers,
+                  ),
               ),
             ),
-
-            /*FutureBuilder(
-            future: Future.microtask(() => WeatherData.create(currentPosition.latitude, currentPosition.longitude)),
-            builder: (
-                BuildContext context,
-                AsyncSnapshot<dynamic> snapshot
-                ) {
-              if (snapshot.hasData){
-
-                WeatherData weatherData = snapshot.data as WeatherData;
-
-                //return Text(data.currentWeather.weather_main);
-                return weatherBody(weatherData);
-              }
-              else{
-                return const Center(child: CircularProgressIndicator());
-              }
-            },
-          ),*/
             Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
@@ -139,55 +142,79 @@ class FeedScreenState extends State<FeedScreen> {
                           padding: const EdgeInsets.only(top: 10, right: 5, left: 5),
                           child: SizedBox(
                             width: MediaQuery.of(context).size.width,
-                            child: PageView.builder(
-                              padEnds: false,
-                                itemCount: 3,
-                                pageSnapping: true,
-                                controller: _pageController,
-                                scrollDirection: Axis.vertical,
-                                onPageChanged: (page) {
-                                  setState(() {
-                                    activePage = page;
-                                  });
-                                },
-                                itemBuilder: (context, pagePosition) {
-                                  return NotificationListener(
-                                      onNotification: (notification) {
-                                        //bool isStart = false;
-                                        if (notification is ScrollStartNotification){
-                                          if (scrollControllers[pagePosition].position.pixels == scrollControllers[pagePosition].position.maxScrollExtent){
-                                            _shouldScrollToNextPage = true;
-                                            //print( _shouldScrollToNextPage);
-                                          }
-                                          else if (scrollControllers[pagePosition].position.pixels == 0){
-                                            _shouldScrollToPrevPage = true;
-                                          }
-                                          else{
-                                            _shouldScrollToNextPage = false;
-                                            _shouldScrollToPrevPage = false;
-                                          }
-                                        }
-                                        if (notification is OverscrollNotification) {
-                                          if (notification.metrics.axis == Axis.vertical) {
-                                            if (notification.dragDetails != null) {
-                                              if (notification.dragDetails!.delta.dy < 0 && _shouldScrollToNextPage) {
-                                                _scrollDown();
-                                                _shouldScrollToNextPage = false;
+                            child: FutureBuilder(
+                              future: Future.microtask(() => Feed.create(currentPosition.latitude, currentPosition.longitude, 50, context)),
+                              builder: (
+                                  BuildContext context,
+                                  AsyncSnapshot<dynamic> snapshot
+                                  ) {
+                                if (snapshot.hasData){
+
+                                  Feed feedData = snapshot.data as Feed;
+
+                                  generateMarkers(feedData.posts);
+
+                                  //return Text(data.currentWeather.weather_main);
+                                  return PageView.builder(
+                                      padEnds: false,
+                                      itemCount: feedData.posts.length,
+                                      pageSnapping: true,
+                                      controller: _pageController,
+                                      scrollDirection: Axis.vertical,
+                                      onPageChanged: (page) {
+                                        setState(() {
+                                          activePage = page;
+                                        });
+                                      },
+                                      itemBuilder: (context, pagePosition) {
+
+                                        Future.delayed(Duration.zero, (){
+                                          mapController.move(markers[pagePosition].point, mapController.zoom);
+                                        });
+
+                                        return NotificationListener(
+                                          onNotification: (notification) {
+                                            //bool isStart = false;
+                                            if (notification is ScrollStartNotification){
+                                              if (scrollControllers[pagePosition].position.pixels == scrollControllers[pagePosition].position.maxScrollExtent){
+                                                _shouldScrollToNextPage = true;
+                                                //print( _shouldScrollToNextPage);
                                               }
-                                              else if (notification.dragDetails!.delta.dy > 0 && _shouldScrollToPrevPage) {
-                                                _scrollUp();
+                                              else if (scrollControllers[pagePosition].position.pixels == 0){
+                                                _shouldScrollToPrevPage = true;
+                                              }
+                                              else{
+                                                _shouldScrollToNextPage = false;
+                                                _shouldScrollToPrevPage = false;
                                               }
                                             }
-                                          }
-                                        }
-                                        return false;
-                                      },
-                                        child: SingleChildScrollView(
-                                          controller: scrollControllers[pagePosition],
-                                            child: const PostItem()
-                                        ),
-                                    );
-                                }),
+                                            if (notification is OverscrollNotification) {
+                                              if (notification.metrics.axis == Axis.vertical) {
+                                                if (notification.dragDetails != null) {
+                                                  if (notification.dragDetails!.delta.dy < 0 && _shouldScrollToNextPage) {
+                                                    _scrollDown();
+                                                    _shouldScrollToNextPage = false;
+                                                  }
+                                                  else if (notification.dragDetails!.delta.dy > 0 && _shouldScrollToPrevPage) {
+                                                    _scrollUp();
+                                                  }
+                                                }
+                                              }
+                                            }
+                                            return false;
+                                          },
+                                          child: SingleChildScrollView(
+                                              controller: scrollControllers[pagePosition],
+                                              child: PostItem(post: feedData.posts[pagePosition],)
+                                          ),
+                                        );
+                                      });
+                                }
+                                else{
+                                  return const Center(child: CircularProgressIndicator());
+                                }
+                              },
+                            ),
                           )
                         )
                 )

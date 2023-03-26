@@ -8,6 +8,7 @@ class CustomInterceptor extends Interceptor{
       SharedPreferences cache = await SharedPreferences.getInstance();
       await cache.remove("user_id");
       await cache.remove("token");
+      //TODO previous screens need to be refreshed
     }
     super.onResponse(response, handler);
   }
