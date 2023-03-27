@@ -102,6 +102,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                                         Stack(
                                           children: [
                                             CustomNetworkImage(
+                                              reload: true,
                                               url: urlKey +
                                                   'profile/profile_pic/' +
                                                   profile.id.toString(),
@@ -363,6 +364,7 @@ class _ImageDialogState extends State<ImageDialog> {
           children: [
             !isPicked
                 ? CustomNetworkImage(
+              reload: true,
                     url: urlKey +
                         'profile/profile_pic/' +
                         widget.profile.id.toString(),

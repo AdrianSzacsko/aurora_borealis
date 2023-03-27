@@ -40,6 +40,7 @@ class _PostItemState extends State<PostItem> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   CustomNetworkImage(
+                    reload: false,
                     url: urlKey +
                         'profile/profile_pic/' +
                         widget.post.user_id.toString(),
@@ -270,9 +271,11 @@ class _PostImageState extends State<PostImageItem> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.5,
+      height: widget.images.isEmpty ? MediaQuery.of(context).size.height * 0.3 : MediaQuery.of(context).size.height * 0.5,
       width: MediaQuery.of(context).size.width,
-      child: PageView.builder(
+      child: widget.images.isEmpty ?
+          const Center(child: Icon(Icons.image_not_supported, size: 100,),):
+      PageView.builder(
           padEnds: false,
           itemCount: widget.images.length,
           pageSnapping: true,

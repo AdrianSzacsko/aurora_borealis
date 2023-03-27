@@ -7,10 +7,9 @@ import '../key.dart';
 class CustomNetworkImage extends StatelessWidget{
   final String url;
   final double radius;
+  final bool reload;
 
-  const CustomNetworkImage({Key? key, required this.url, required this.radius}) : super(key: key);
-
-
+  const CustomNetworkImage({Key? key, required this.url, required this.radius, required this.reload}) : super(key: key);
 
 
   @override
@@ -22,7 +21,7 @@ class CustomNetworkImage extends StatelessWidget{
             return CircleAvatar(
               child: ClipOval(
                 child: Image.network(
-                  '$url?${DateTime.now().millisecondsSinceEpoch.toString()}',
+                  reload ? '$url?${DateTime.now().millisecondsSinceEpoch.toString()}' : url,
                   headers: {'authorization': 'Bearer ' + snapshot.data.getString('token')},
                   width: radius * 2,
                   height: radius * 2,
