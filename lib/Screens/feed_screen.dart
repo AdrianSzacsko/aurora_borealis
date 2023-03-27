@@ -2,6 +2,9 @@ import 'package:aurora_borealis/Components/custom_chart.dart';
 import 'package:aurora_borealis/Components/custom_map.dart';
 import 'package:aurora_borealis/Components/custom_network_image.dart';
 import 'package:aurora_borealis/Components/post_item.dart';
+import 'package:aurora_borealis/Components/snackbar.dart';
+import 'package:aurora_borealis/Network/farm.dart';
+import 'package:aurora_borealis/Network_Responses/farms.dart';
 import 'package:aurora_borealis/Network_Responses/weather.dart';
 import 'package:aurora_borealis/constants.dart';
 import 'package:flutter/material.dart';
@@ -31,14 +34,18 @@ class FeedScreen extends StatefulWidget {
 class FeedScreenState extends State<FeedScreen> {
   MapController mapController = MapController();
   late PageController _pageController;
-  List<ScrollController> scrollControllers = [ScrollController(), ScrollController(), ScrollController()]; //TODO move this into the futureBuilder
+  List<ScrollController> scrollControllers = [];
   bool _shouldScrollToNextPage = false;
   bool _shouldScrollToPrevPage = true;
   late latLng.LatLng currentPosition;
+  late latLng.LatLng farmPosition;
+
+
   int user_id = 0;
 
   int activePage = 1;
   List<Marker> markers = [];
+  List<Marker> farmMarkers = [];
 
   _scrollDown() async {
     await _pageController.nextPage(
@@ -63,6 +70,7 @@ class FeedScreenState extends State<FeedScreen> {
     final position = await Geolocator.getCurrentPosition();
     setState(() {
       currentPosition = latLng.LatLng(position.latitude, position.longitude);
+      farmPosition = currentPosition;
     });
   }
 
@@ -70,6 +78,7 @@ class FeedScreenState extends State<FeedScreen> {
   void initState() {
     super.initState();
     _getCurrentLocation();
+    //currentPosition is always set
     _pageController = PageController(viewportFraction: 0.9);
   }
 
@@ -88,6 +97,30 @@ class FeedScreenState extends State<FeedScreen> {
     });
   }
 
+  void addFarmMarker(latLng.LatLng point) {
+    farmMarkers.add(Marker(
+        point: point,
+        width: 150,
+        height: 70,
+        builder: (context) => CustomShape(child: const Icon(Icons.agriculture_outlined), color: Colors.brown,)));
+  }
+
+  void generateFarmMarkers(List<Farms> points) {
+    farmMarkers.clear();
+    points.forEach((element) {
+      addFarmMarker(latLng.LatLng(element.latitude, element.longitude));
+    });
+  }
+
+  void getChosenFarm(Farms farm){
+    print(farm.name);
+    farmPosition = latLng.LatLng(farm.latitude, farm.longitude);
+  }
+
+  void setMapLocation(latLng.LatLng point){
+    mapController.move(point, mapController.zoom);
+  }
+
   @override
   Widget build(BuildContext context) {
     if (ModalRoute.of(context)!.settings.arguments == null) {
@@ -95,132 +128,162 @@ class FeedScreenState extends State<FeedScreen> {
     } else {
       user_id = ModalRoute.of(context)!.settings.arguments as int;
 
-      return Scaffold(
-        resizeToAvoidBottomInset: true,
-        appBar: myAppBar(context),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            await showDialog(context: context, builder: (context){
-              return PostDialog();
-            });
-          },
-          child: const Icon(Icons.add_rounded),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
-        body: Stack(
-          fit: StackFit.expand,
-          children: [
-            Align(
-              alignment: Alignment.topCenter,
-              child: CustomMap(
-                mapController: mapController,
-                //coors: latLng.LatLng(currentPosition.latitude, currentPosition.longitude),
-                  markerLayer: MarkerLayer(
-                    markers: markers,
-                  ),
+      return FutureBuilder(
+        future: Future.microtask(() => FarmsList.create(context)),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData){
+
+            FarmsList farmsList = snapshot.data as FarmsList;
+
+            if (farmsList.farms.isEmpty){
+              //TODO error handling
+              errorResponseBar("Please create a Farm", context);
+              Navigator.pop(context);
+            }
+
+            generateFarmMarkers(farmsList.farms);
+
+            return Scaffold(
+              resizeToAvoidBottomInset: true,
+              appBar: MyAppBarWithDropdown(farmsList: farmsList, function: getChosenFarm,),
+              floatingActionButton: FloatingActionButton(
+                onPressed: () async {
+                  await showDialog(context: context, builder: (context){
+                    return PostDialog(farmsList: farmsList.farms,);
+                  });
+                },
+                child: const Icon(Icons.add_rounded),
               ),
-            ),
-            Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height * 0.59,
-                    decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.7),
-                        image: DecorationImage(
-                          fit: BoxFit.fill,
-                          image: Image.asset(
-                            'assets/images/backgroundGreen.jpg',
-                          ).image,
-                          colorFilter: ColorFilter.mode(
-                              Colors.black.withOpacity(0.2), BlendMode.dstATop),
-                        ),
-                        borderRadius: const BorderRadius.only(
-                            topRight: Radius.circular(40),
-                            topLeft: Radius.circular(40))),
-                    child: Padding(
-                          padding: const EdgeInsets.only(top: 10, right: 5, left: 5),
-                          child: SizedBox(
-                            width: MediaQuery.of(context).size.width,
-                            child: FutureBuilder(
-                              future: Future.microtask(() => Feed.create(currentPosition.latitude, currentPosition.longitude, 50, context)),
-                              builder: (
-                                  BuildContext context,
-                                  AsyncSnapshot<dynamic> snapshot
-                                  ) {
-                                if (snapshot.hasData){
+              floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+              body: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: CustomMap(
+                      mapController: mapController,
+                      //coors: latLng.LatLng(currentPosition.latitude, currentPosition.longitude),
+                      markerLayer: MarkerLayer(
+                        markers: [...farmMarkers, ...markers],
+                      ),
+                    ),
+                  ),
+                  Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height * 0.59,
+                          decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.7),
+                              image: DecorationImage(
+                                fit: BoxFit.fill,
+                                image: Image.asset(
+                                  'assets/images/backgroundGreen.jpg',
+                                ).image,
+                                colorFilter: ColorFilter.mode(
+                                    Colors.black.withOpacity(0.2), BlendMode.dstATop),
+                              ),
+                              borderRadius: const BorderRadius.only(
+                                  topRight: Radius.circular(40),
+                                  topLeft: Radius.circular(40))),
+                          child: Padding(
+                              padding: const EdgeInsets.only(top: 10, right: 5, left: 5),
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width,
+                                child: FutureBuilder(
+                                  future: Future.microtask(() => Feed.create(farmPosition.latitude, farmPosition.longitude, 50, context)),
+                                  builder: (
+                                      BuildContext context,
+                                      AsyncSnapshot<dynamic> snapshot
+                                      ) {
+                                    if (snapshot.hasData){
 
-                                  Feed feedData = snapshot.data as Feed;
+                                      Feed feedData = snapshot.data as Feed;
+                                      scrollControllers.clear();
+                                      for (int i = 0; i < feedData.posts.length; i++) {
+                                        scrollControllers.add(ScrollController());
+                                      }
 
-                                  generateMarkers(feedData.posts);
+                                      generateMarkers(feedData.posts);
 
-                                  //return Text(data.currentWeather.weather_main);
-                                  return PageView.builder(
-                                      padEnds: false,
-                                      itemCount: feedData.posts.length,
-                                      pageSnapping: true,
-                                      controller: _pageController,
-                                      scrollDirection: Axis.vertical,
-                                      onPageChanged: (page) {
-                                        setState(() {
-                                          activePage = page;
-                                        });
-                                      },
-                                      itemBuilder: (context, pagePosition) {
+                                      //return Text(data.currentWeather.weather_main);
+                                      return PageView.builder(
+                                          padEnds: false,
+                                          itemCount: feedData.posts.length,
+                                          pageSnapping: true,
+                                          controller: _pageController,
+                                          scrollDirection: Axis.vertical,
+                                          onPageChanged: (page) {
+                                            setState(() {
+                                              activePage = page;
+                                            });
+                                          },
+                                          itemBuilder: (context, pagePosition) {
 
-                                        Future.delayed(Duration.zero, (){
-                                          mapController.move(markers[pagePosition].point, mapController.zoom);
-                                        });
+                                            /*Future.delayed(Duration.zero, (){
+                                              //mapController.move(markers[pagePosition].point, mapController.zoom);
+                                              setMapLocation(markers[pagePosition].point);
+                                            });*/
 
-                                        return NotificationListener(
-                                          onNotification: (notification) {
-                                            //bool isStart = false;
-                                            if (notification is ScrollStartNotification){
-                                              if (scrollControllers[pagePosition].position.pixels == scrollControllers[pagePosition].position.maxScrollExtent){
-                                                _shouldScrollToNextPage = true;
-                                                //print( _shouldScrollToNextPage);
-                                              }
-                                              else if (scrollControllers[pagePosition].position.pixels == 0){
-                                                _shouldScrollToPrevPage = true;
-                                              }
-                                              else{
-                                                _shouldScrollToNextPage = false;
-                                                _shouldScrollToPrevPage = false;
-                                              }
-                                            }
-                                            if (notification is OverscrollNotification) {
-                                              if (notification.metrics.axis == Axis.vertical) {
-                                                if (notification.dragDetails != null) {
-                                                  if (notification.dragDetails!.delta.dy < 0 && _shouldScrollToNextPage) {
-                                                    _scrollDown();
-                                                    _shouldScrollToNextPage = false;
+                                            return NotificationListener(
+                                              onNotification: (notification) {
+                                                //bool isStart = false;
+                                                if (notification is ScrollStartNotification){
+                                                  if (scrollControllers[pagePosition].position.pixels == scrollControllers[pagePosition].position.maxScrollExtent){
+                                                    _shouldScrollToNextPage = true;
+                                                    //print( _shouldScrollToNextPage);
                                                   }
-                                                  else if (notification.dragDetails!.delta.dy > 0 && _shouldScrollToPrevPage) {
-                                                    _scrollUp();
+                                                  else if (scrollControllers[pagePosition].position.pixels == 0){
+                                                    _shouldScrollToPrevPage = true;
+                                                  }
+                                                  else{
+                                                    _shouldScrollToNextPage = false;
+                                                    _shouldScrollToPrevPage = false;
                                                   }
                                                 }
-                                              }
-                                            }
-                                            return false;
-                                          },
-                                          child: SingleChildScrollView(
-                                              controller: scrollControllers[pagePosition],
-                                              child: PostItem(post: feedData.posts[pagePosition],)
-                                          ),
-                                        );
-                                      });
-                                }
-                                else{
-                                  return const Center(child: CircularProgressIndicator());
-                                }
-                              },
-                            ),
+                                                if (notification is OverscrollNotification) {
+                                                  if (notification.metrics.axis == Axis.vertical) {
+                                                    if (notification.dragDetails != null) {
+                                                      if (notification.dragDetails!.delta.dy < 0 && _shouldScrollToNextPage) {
+                                                        _scrollDown();
+                                                        _shouldScrollToNextPage = false;
+                                                      }
+                                                      else if (notification.dragDetails!.delta.dy > 0 && _shouldScrollToPrevPage) {
+                                                        _scrollUp();
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                                return false;
+                                              },
+                                              child: SingleChildScrollView(
+                                                  controller: scrollControllers[pagePosition],
+                                                  child: PostItem(post: feedData.posts[pagePosition], setMapLocation: setMapLocation,)
+                                              ),
+                                            );
+                                          });
+                                    }
+                                    else{
+                                      return const Center(child: CircularProgressIndicator());
+                                    }
+                                  },
+                                ),
+                              )
                           )
-                        )
-                )
-            ),
-          ],
-        ),
+                      )
+                  ),
+                ],
+              ),
+            );
+          }
+          else{
+            return Scaffold(
+              resizeToAvoidBottomInset: true,
+                appBar: myAppBar(context),
+              body: const Center(child: CircularProgressIndicator(),),
+            );
+          }
+        },
       );
     }
   }
@@ -228,7 +291,9 @@ class FeedScreenState extends State<FeedScreen> {
 
 class PostDialog extends StatefulWidget {
 
-  const PostDialog({Key? key}) : super(key: key);
+  const PostDialog({Key? key, required this.farmsList}) : super(key: key);
+
+  final List<Farms> farmsList;
 
   @override
   _PostDialogState createState() => _PostDialogState();
@@ -247,7 +312,7 @@ class _PostDialogState extends State<PostDialog> {
       content: Container(
           width: MediaQuery.of(context).size.width,
         child: SingleChildScrollView(
-          child: PostNewItem(),
+          child: PostNewItem(farmsList: widget.farmsList,),
         )
       ),
     );

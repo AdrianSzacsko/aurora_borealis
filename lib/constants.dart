@@ -11,6 +11,8 @@ const backgroundColor = Color(0xFFEAEAEA);
 
 const defaultPadding = 16.0;
 
+const List<String> feedCategories =["Seeding", "Pollination", "Irrigation", "Fertilization", "Maintenance", "Other"];
+
 
 
 

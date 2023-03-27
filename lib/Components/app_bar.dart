@@ -44,6 +44,152 @@ AppBar myAppBar(BuildContext context) {
   );
 }
 
+/*AppBar myAppBarWithDropdown(BuildContext context, FarmsList farmsList, Function(Farms farm) function) {
+
+  Farms dropdownValue = farmsList.farms.first;
+
+  return AppBar(
+    backgroundColor: primaryColor,
+    //leading: const Icon(Icons.menu),
+    leading: GestureDetector(
+      onTap: () async {
+        if (Navigator.of(context).canPop()) {
+          Navigator.of(context).pop();
+        } else {
+          bool? result = await dialogConfirmation(
+              context, "Exit", "Are you sure you want to exit?");
+          if (result == true) {
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            await prefs.clear();
+            SystemNavigator.pop();
+          }
+        }
+      },
+      child: const Icon(
+        Icons.arrow_back_outlined, // add custom icons also
+      ),
+    ),
+    title: Center(
+      //padding: const EdgeInsets.only(left: 30),
+      child: DropdownButton(
+        items: farmsList.farms.map<DropdownMenuItem<Farms>>((Farms value) {
+          return DropdownMenuItem<Farms>(
+            value: value,
+            child: Text(value.name),
+          );
+        }).toList(),
+        onChanged: (Farms? value) {
+          // This is called when the user selects an item.
+          function(value!);
+          dropdownValue = value;
+        },
+        value: dropdownValue,
+      )
+    ),
+    actions: [
+      Padding(
+          padding: const EdgeInsets.only(right: 20.0),
+          child: GestureDetector(
+            onTap: () async {
+              SharedPreferences shared = await SharedPreferences.getInstance();
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const MenuScreen(),
+                  settings: RouteSettings(arguments: shared.getInt('user_id'))));
+            },
+            child: const Icon(Icons.menu),
+          )),
+    ],
+  );
+}*/
+
+class MyAppBarWithDropdown extends StatefulWidget implements PreferredSizeWidget{
+  const MyAppBarWithDropdown({
+    Key? key, required this.farmsList, required this.function,
+  }) : preferredSize = const Size.fromHeight(kToolbarHeight), super(key: key);
+
+  final FarmsList farmsList;
+  final Function(Farms farm) function;
+
+  @override
+  MyAppBarWithDropdownState createState() => MyAppBarWithDropdownState();
+
+  @override
+  // TODO: implement preferredSize
+  final Size preferredSize;
+}
+
+class MyAppBarWithDropdownState extends State<MyAppBarWithDropdown>{
+
+  int dropdownIndex = 0;
+
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+
+    widget.function(widget.farmsList.farms[dropdownIndex]);
+
+    return AppBar(
+      backgroundColor: primaryColor,
+      //leading: const Icon(Icons.menu),
+      leading: GestureDetector(
+        onTap: () async {
+          if (Navigator.of(context).canPop()) {
+            Navigator.of(context).pop();
+          } else {
+            bool? result = await dialogConfirmation(
+                context, "Exit", "Are you sure you want to exit?");
+            if (result == true) {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              await prefs.clear();
+              SystemNavigator.pop();
+            }
+          }
+        },
+        child: const Icon(
+          Icons.arrow_back_outlined, // add custom icons also
+        ),
+      ),
+      title: Center(
+        //padding: const EdgeInsets.only(left: 30),
+          child: DropdownButton(
+            value: widget.farmsList.farms[dropdownIndex],
+            items: widget.farmsList.farms.map<DropdownMenuItem<Farms>>((Farms value) {
+              return DropdownMenuItem<Farms>(
+                value: value,
+                child: Text(value.name),
+              );
+            }).toList(),
+            onChanged: (Farms? value) {
+              // This is called when the user selects an item.
+              widget.function(value!);
+              setState(() {
+                dropdownIndex = widget.farmsList.farms.indexOf(value);
+              });
+            },
+          )
+      ),
+      actions: [
+        Padding(
+            padding: const EdgeInsets.only(right: 20.0),
+            child: GestureDetector(
+              onTap: () async {
+                SharedPreferences shared = await SharedPreferences.getInstance();
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const MenuScreen(),
+                    settings: RouteSettings(arguments: shared.getInt('user_id'))));
+              },
+              child: const Icon(Icons.menu),
+            )),
+      ],
+    );
+  }
+
+}
+
 AppBar myAppBarWithSearch(BuildContext context, void Function(LatLng.LatLng point) onTilePress) {
 
   return AppBar(

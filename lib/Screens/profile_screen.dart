@@ -68,6 +68,10 @@ class ProfileScreenState extends State<ProfileScreen> {
                     bool myProfile = user_id == profile.id;
                     generateMarkers(profile.farms);
 
+                    Future.delayed(Duration.zero, (){
+                      _mapController.move(latLng.LatLng(_mapController.center.latitude + 0.000001, _mapController.center.longitude), _mapController.zoom);
+                    });
+
                     return Align(
                       alignment: Alignment.bottomCenter,
                       child: Container(

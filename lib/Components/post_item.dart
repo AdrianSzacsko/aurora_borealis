@@ -1,18 +1,24 @@
 import 'dart:io';
 
+import 'package:aurora_borealis/Components/snackbar.dart';
 import 'package:aurora_borealis/Network_Responses/post.dart';
+import 'package:aurora_borealis/Network_Responses/feed.dart';
 import 'package:aurora_borealis/constants.dart';
 import 'package:aurora_borealis/key.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:readmore/readmore.dart';
-
+import 'package:latlong2/latlong.dart' as latLng;
+import '../Network/feed.dart';
+import '../Network_Responses/farms.dart';
 import 'custom_network_image.dart';
 import 'oval_component.dart';
 
 class PostItem extends StatefulWidget {
   final Post post;
-  const PostItem({Key? key, required this.post}) : super(key: key);
+  final Function(latLng.LatLng point) setMapLocation;
+  const PostItem({Key? key, required this.post, required this.setMapLocation})
+      : super(key: key);
 
   @override
   _PostItemState createState() => _PostItemState();
@@ -28,36 +34,80 @@ class _PostItemState extends State<PostItem> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              CustomNetworkImage(
-                url:
-                urlKey +
-                    'profile/profile_pic/' +
-                    widget.post.user_id.toString(),
-                radius: 25,
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              Column(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    widget.post.first_name + " " + widget.post.last_name,
-                    style: const TextStyle(
-                      fontSize: 18,
-                    ),
+                  CustomNetworkImage(
+                    url: urlKey +
+                        'profile/profile_pic/' +
+                        widget.post.user_id.toString(),
+                    radius: 25,
                   ),
-                  Text(
-                    widget.post.date.year.toString() + "." + widget.post.date.month.toString() + "." + widget.post.date.day.toString(),
-                    style: const TextStyle(
-                      fontSize: 11,
-                      color: Colors.grey,
-                    ),
-                  )
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.post.first_name + " " + widget.post.last_name,
+                        style: const TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
+                      Text(
+                        widget.post.date.year.toString() +
+                            "." +
+                            widget.post.date.month.toString() +
+                            "." +
+                            widget.post.date.day.toString(),
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: Colors.grey,
+                        ),
+                      )
+                    ],
+                  ),
                 ],
+              ),
+              ClipOval(
+                child: Padding(
+                  padding: const EdgeInsets.all(5),
+                  child: IconButton(
+                      onPressed: () {
+                        widget.setMapLocation(latLng.LatLng(
+                            widget.post.latitude, widget.post.longitude));
+                      },
+                      icon: Icon(
+                        Icons.my_location,
+                        color: primaryColor.shade900,
+                      )),
+                ),
+              )
+            ],
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Row(
+            children: [
+              const Text(
+                "Category: ",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+              Text(
+                "#" + widget.post.category,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: primaryColor.shade600,
+                  fontStyle: FontStyle.italic,
+                ),
               ),
             ],
           ),
@@ -76,7 +126,9 @@ class _PostItemState extends State<PostItem> {
           const SizedBox(
             height: 10,
           ),
-          PostImageItem(images: widget.post.photos_id,),
+          PostImageItem(
+            images: widget.post.photos_id,
+          ),
         ],
       ),
     ));
@@ -84,21 +136,35 @@ class _PostItemState extends State<PostItem> {
 }
 
 class PostNewItem extends StatefulWidget {
-  const PostNewItem({Key? key}) : super(key: key);
+  const PostNewItem({Key? key, required this.farmsList}) : super(key: key);
+
+  final List<Farms> farmsList;
 
   @override
   _PostNewItemState createState() => _PostNewItemState();
 }
 
 class _PostNewItemState extends State<PostNewItem> {
-  List<String> farmsList = ["Farm 1", "Farm 2", "Farm Filakovo"];
-  late String dropdownValue;
+  late Farms dropdownValue;
+  late String categoryDropdownValue;
+  TextEditingController textEditingController = TextEditingController();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    dropdownValue = farmsList.first;
+    dropdownValue = widget.farmsList.first;
+    categoryDropdownValue = feedCategories.first;
+  }
+
+  void createPost(List<XFile> images) async {
+    //call the post method
+    await Feed.newPost(
+        dropdownValue.latitude,
+        dropdownValue.longitude,
+        categoryDropdownValue,
+        textEditingController.text,
+        images, context);
   }
 
   @override
@@ -106,6 +172,9 @@ class _PostNewItemState extends State<PostNewItem> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        const SizedBox(
+          height: 10,
+        ),
         DropdownButtonFormField(
           decoration: InputDecoration(
             hintText: 'Farm location',
@@ -114,27 +183,59 @@ class _PostNewItemState extends State<PostNewItem> {
               borderSide: BorderSide(width: 1, color: Colors.green.shade900),
             ),
           ),
-          items: farmsList.map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
+          items: widget.farmsList.map<DropdownMenuItem<Farms>>((Farms value) {
+            return DropdownMenuItem<Farms>(
               value: value,
-              child: Text(value),
+              child: Text(value.name),
             );
           }).toList(),
-          onChanged: (String? value) {
+          onChanged: (Farms? value) {
             // This is called when the user selects an item.
             setState(() {
               dropdownValue = value!;
             });
           },
+          value: dropdownValue,
         ),
         const SizedBox(
           height: 10,
         ),
-        const TextField(
+        DropdownButtonFormField(
+          decoration: InputDecoration(
+            hintText: 'Post Category',
+            labelText: 'Post Category',
+            border: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: Colors.green.shade900),
+            ),
+          ),
+          items: feedCategories.map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(
+                "#" + value,
+                style: const TextStyle(
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            );
+          }).toList(),
+          onChanged: (String? value) {
+            // This is called when the user selects an item.
+            setState(() {
+              categoryDropdownValue = value!;
+            });
+          },
+          value: feedCategories.first,
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        TextField(
           keyboardType: TextInputType.multiline,
           minLines: 1,
           maxLines: null,
-          decoration: InputDecoration(
+          controller: textEditingController,
+          decoration: const InputDecoration(
               border: OutlineInputBorder(),
               hintText: "Write something about your new post",
               hintMaxLines: 2),
@@ -142,26 +243,7 @@ class _PostNewItemState extends State<PostNewItem> {
         const SizedBox(
           height: 10,
         ),
-        Container(
-          decoration: BoxDecoration(
-            border: Border.all(width: 1.0,
-                color: Theme.of(context).dividerColor),
-            borderRadius: const BorderRadius.all(Radius.circular(5))
-          ),
-          child: const Padding(
-            padding: EdgeInsets.all(5),
-          child: PostNewImageItem(),
-          ),
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        FilledButton(
-            onPressed: (){
-
-            },
-            child: const Text("Create Post")
-        )
+        PostNewImageItem(createPost: createPost,),
       ],
     );
   }
@@ -204,7 +286,9 @@ class _PostImageState extends State<PostImageItem> {
             return Container(
                 margin: const EdgeInsets.only(left: 2, right: 2),
                 child: CustomNetworkPostImage(
-                  url: urlKey + "feed/post_pic/" + widget.images[pagePosition].toString(),
+                  url: urlKey +
+                      "feed/post_pic/" +
+                      widget.images[pagePosition].toString(),
                 ));
           }),
     );
@@ -212,7 +296,9 @@ class _PostImageState extends State<PostImageItem> {
 }
 
 class PostNewImageItem extends StatefulWidget {
-  const PostNewImageItem({Key? key}) : super(key: key);
+  const PostNewImageItem({Key? key, required this.createPost}) : super(key: key);
+
+  final Function(List<XFile> images) createPost;
 
   @override
   _PostNewImageState createState() => _PostNewImageState();
@@ -224,6 +310,7 @@ class _PostNewImageState extends State<PostNewImageItem> {
   late PageController _pageController;
   List<XFile> images = [];
 
+
   @override
   void initState() {
     super.initState();
@@ -233,68 +320,95 @@ class _PostNewImageState extends State<PostNewImageItem> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisSize: MainAxisSize.min,
       children: [
-        images.isNotEmpty ? SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 0.3,
-          child: PageView.builder(
-              padEnds: false,
-              itemCount: images.length,
-              pageSnapping: true,
-              controller: _pageController,
-              onPageChanged: (page) {
-                setState(() {
-                  activePage = page;
-                });
-              },
-              itemBuilder: (context, pagePosition) {
-                return Container(
-                    margin: const EdgeInsets.only(left: 2, right: 2),
-                    child: Image(
-                      image: FileImage(File(images[pagePosition].path)),
+        Container(
+          decoration: BoxDecoration(
+              border:
+                  Border.all(width: 1.0, color: Theme.of(context).dividerColor),
+              borderRadius: const BorderRadius.all(Radius.circular(5))),
+          child: Padding(
+            padding: const EdgeInsets.all(5),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                images.isNotEmpty
+                    ? SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height * 0.3,
+                        child: PageView.builder(
+                            padEnds: false,
+                            itemCount: images.length,
+                            pageSnapping: true,
+                            controller: _pageController,
+                            onPageChanged: (page) {
+                              setState(() {
+                                activePage = page;
+                              });
+                            },
+                            itemBuilder: (context, pagePosition) {
+                              return Container(
+                                margin:
+                                    const EdgeInsets.only(left: 2, right: 2),
+                                child: Image(
+                                  image: FileImage(
+                                      File(images[pagePosition].path)),
+                                ),
+                              );
+                            }),
+                      )
+                    : const SizedBox(),
+                images.isNotEmpty
+                    ? const SizedBox(
+                        height: 10,
+                      )
+                    : const SizedBox(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    FilledButton(
+                      onPressed: () async {
+                        List<XFile> tempImages = await _picker.pickMultiImage(
+                          //source: ImageSource.gallery,
+                          maxHeight: 4000,
+                          maxWidth: 4000,
+                        );
+                        if (tempImages.isNotEmpty) {
+                          for (var image in tempImages) {
+                            images.add(image);
+                          }
+                          setState(() {});
+                        }
+                      },
+                      child: const Icon(Icons.add_photo_alternate),
                     ),
-                    );
-              }),
-        ) :
-        const SizedBox(),
-        images.isNotEmpty ? const SizedBox(
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    FilledButton(
+                        onPressed: () {
+                          images.clear();
+                          setState(() {});
+                        },
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStatePropertyAll<Color>(
+                              Colors.red.shade600),
+                        ),
+                        child: const Icon(Icons.delete))
+                  ],
+                )
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(
           height: 10,
-        ) : const SizedBox(),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            FilledButton(
-              onPressed: () async {
-                List<XFile> tempImages = await _picker.pickMultiImage(
-                  //source: ImageSource.gallery,
-                  maxHeight: 4000,
-                  maxWidth: 4000,
-                );
-                if (tempImages.isNotEmpty) {
-                  for (var image in tempImages) {
-                    images.add(image);
-                  }
-                  setState(() {});
-                }
-              },
-              child: const Icon(Icons.add_photo_alternate),
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            FilledButton(
-                onPressed: () {
-                  images.clear();
-                  setState(() {});
-                },
-                style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStatePropertyAll<Color>(Colors.red.shade600),
-                ),
-                child: const Icon(Icons.delete))
-          ],
-        )
+        ),
+        FilledButton(
+            onPressed: () async {
+          await widget.createPost(images);
+          Navigator.of(context).pop();
+        },
+            child: const Text("Create Post")),
       ],
     );
   }

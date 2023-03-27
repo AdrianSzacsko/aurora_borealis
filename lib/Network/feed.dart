@@ -49,12 +49,12 @@ class FeedNetwork with ChangeNotifier {
     dio.options.headers['content-Type'] = 'application/json';
     dio.options.connectTimeout = const Duration(seconds: 5);
 
-    //final prefs = await SharedPreferences.getInstance();
-    //final token = prefs.getString('token') ?? '';
-    //dio.options.headers['authorization'] = "Bearer " + token;
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? '';
+    dio.options.headers['authorization'] = "Bearer " + token;
 
     try {
-      response = await dio.post(urlKey + 'feed/new_post/', data: {
+      response = await dio.post(urlKey + 'feed/new_post', data: {
         'latitude': latitude,
         'longitude': longitude,
         'category': category,
@@ -99,9 +99,8 @@ class FeedNetwork with ChangeNotifier {
     for (var i = 0; i < images.length; i++) {
       final String? mimeType = mime(images[i].path);
       final File file = File(images[i].path);
-      print(mimeType.toString().split("/")[1]);
+      //print(mimeType.toString().split("/")[1]);
       String filetype = mimeType.toString().split("/")[1];
-
       formData.files.add(MapEntry(
         'files',
         await MultipartFile.fromFile(
@@ -112,11 +111,13 @@ class FeedNetwork with ChangeNotifier {
       ));
     }
 
+    //formData.fields.add(MapEntry('post_id', postId.toString()));
+
     Response response;
 
     var dio = Dio();
     dio.interceptors.add(CustomInterceptor());
-    //dio.options.headers['content-Type'] = 'image.' + filetype;
+    //dio.options.headers['content-Type'] = 'image.jpeg';
     dio.options.connectTimeout = const Duration(seconds: 5);
 
     final prefs = await SharedPreferences.getInstance();
@@ -125,10 +126,7 @@ class FeedNetwork with ChangeNotifier {
     dio.options.headers['responseType'] = ResponseType.plain;
 
     try {
-      response = await dio.post(urlKey + 'feed/new_post_photos', data: {
-        'files': formData,
-        'post_id': postId,
-      });
+      response = await dio.post(urlKey + 'feed/new_post_photos/' + postId.toString(), data: formData);
       /*response = await dio.post(
         urlKey + 'new_post_photos',
         data: formData,
@@ -136,6 +134,7 @@ class FeedNetwork with ChangeNotifier {
       );*/
       return response;
     } on DioError catch (e) {
+      print(e);
       return e.response;
     }
 
