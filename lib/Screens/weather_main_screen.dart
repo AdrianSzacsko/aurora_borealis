@@ -40,7 +40,7 @@ enum WeatherType {
 class WeatherMainScreenState extends State<WeatherMainScreen> {
 
   MapController mapController = MapController();
-  late latLng.LatLng currentPosition;
+  latLng.LatLng? currentPosition;
 
 
   void handleLongPressInMap(latLng.LatLng point){
@@ -95,8 +95,9 @@ class WeatherMainScreenState extends State<WeatherMainScreen> {
             ),
           ),
 
-        FutureBuilder(
-          future: Future.microtask(() => WeatherData.create(currentPosition.latitude, currentPosition.longitude, context)),
+        currentPosition != null ? FutureBuilder(
+          key: ValueKey(currentPosition),
+          future: Future.microtask(() => WeatherData.create(currentPosition!.latitude, currentPosition!.longitude, context)),
           builder: (
               BuildContext context,
               AsyncSnapshot<dynamic> snapshot
@@ -112,7 +113,7 @@ class WeatherMainScreenState extends State<WeatherMainScreen> {
               return const Center(child: CircularProgressIndicator());
             }
           },
-        ),
+        ) : const SizedBox(),
         ],
       ),
     );

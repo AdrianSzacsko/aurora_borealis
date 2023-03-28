@@ -106,7 +106,7 @@ class MyAppBarWithDropdown extends StatefulWidget implements PreferredSizeWidget
     Key? key, required this.farmsList, required this.function,
   }) : preferredSize = const Size.fromHeight(kToolbarHeight), super(key: key);
 
-  final FarmsList farmsList;
+  final List<Farms> farmsList;
   final Function(Farms farm) function;
 
   @override
@@ -131,7 +131,7 @@ class MyAppBarWithDropdownState extends State<MyAppBarWithDropdown>{
   @override
   Widget build(BuildContext context) {
 
-    widget.function(widget.farmsList.farms[dropdownIndex]);
+    //widget.function(widget.farmsList.farms[dropdownIndex]);
 
     return AppBar(
       backgroundColor: primaryColor,
@@ -157,8 +157,8 @@ class MyAppBarWithDropdownState extends State<MyAppBarWithDropdown>{
       title: Center(
         //padding: const EdgeInsets.only(left: 30),
           child: DropdownButton(
-            value: widget.farmsList.farms[dropdownIndex],
-            items: widget.farmsList.farms.map<DropdownMenuItem<Farms>>((Farms value) {
+            value: widget.farmsList[dropdownIndex],
+            items: widget.farmsList.map<DropdownMenuItem<Farms>>((Farms value) {
               return DropdownMenuItem<Farms>(
                 value: value,
                 child: Text(value.name),
@@ -168,7 +168,7 @@ class MyAppBarWithDropdownState extends State<MyAppBarWithDropdown>{
               // This is called when the user selects an item.
               widget.function(value!);
               setState(() {
-                dropdownIndex = widget.farmsList.farms.indexOf(value);
+                dropdownIndex = widget.farmsList.indexOf(value);
               });
             },
           )

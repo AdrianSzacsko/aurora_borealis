@@ -8,6 +8,7 @@ import 'package:aurora_borealis/Network_Responses/farms.dart';
 import 'package:aurora_borealis/Network_Responses/weather.dart';
 import 'package:aurora_borealis/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_map/flutter_map.dart';
 import '../Components/custom_form_field.dart';
 import '../Components/ext_string.dart';
@@ -114,7 +115,12 @@ class FeedScreenState extends State<FeedScreen> {
 
   void getChosenFarm(Farms farm){
     print(farm.name);
-    farmPosition = latLng.LatLng(farm.latitude, farm.longitude);
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      setState(() {
+        farmPosition = latLng.LatLng(farm.latitude, farm.longitude);
+        mapController.move(latLng.LatLng(farm.latitude, farm.longitude), mapController.zoom);
+      });
+    });
   }
 
   void setMapLocation(latLng.LatLng point){
@@ -143,9 +149,11 @@ class FeedScreenState extends State<FeedScreen> {
 
             generateFarmMarkers(farmsList.farms);
 
+            Farms currentPositionFarm = Farms(0, "Current position", currentPosition.latitude, currentPosition.longitude);
+
             return Scaffold(
               resizeToAvoidBottomInset: true,
-              appBar: MyAppBarWithDropdown(farmsList: farmsList, function: getChosenFarm,),
+              appBar: MyAppBarWithDropdown(farmsList: [currentPositionFarm, ...farmsList.farms], function: getChosenFarm,),
               floatingActionButton: FloatingActionButton(
                 onPressed: () async {
                   await showDialog(context: context, builder: (context){
@@ -214,16 +222,16 @@ class FeedScreenState extends State<FeedScreen> {
                                           controller: _pageController,
                                           scrollDirection: Axis.vertical,
                                           onPageChanged: (page) {
-                                            setState(() {
+                                            //setState(() {
                                               activePage = page;
-                                            });
+                                            //});
                                           },
                                           itemBuilder: (context, pagePosition) {
 
-                                            /*Future.delayed(Duration.zero, (){
+                                            Future.delayed(Duration.zero, (){
                                               //mapController.move(markers[pagePosition].point, mapController.zoom);
                                               setMapLocation(markers[pagePosition].point);
-                                            });*/
+                                            });
 
                                             return NotificationListener(
                                               onNotification: (notification) {
