@@ -11,13 +11,15 @@ import 'package:readmore/readmore.dart';
 import 'package:latlong2/latlong.dart' as latLng;
 import '../Network/feed.dart';
 import '../Network_Responses/farms.dart';
+import 'app_bar.dart';
 import 'custom_network_image.dart';
 import 'oval_component.dart';
 
 class PostItem extends StatefulWidget {
   final Post post;
   final Function(latLng.LatLng point) setMapLocation;
-  const PostItem({Key? key, required this.post, required this.setMapLocation})
+  Function(Post post)? deletePost;
+  PostItem({Key? key, required this.post, required this.setMapLocation, this.deletePost})
       : super(key: key);
 
   @override
@@ -74,20 +76,41 @@ class _PostItemState extends State<PostItem> {
                   ),
                 ],
               ),
-              ClipOval(
-                child: Padding(
-                  padding: const EdgeInsets.all(5),
-                  child: IconButton(
-                      onPressed: () {
-                        widget.setMapLocation(latLng.LatLng(
-                            widget.post.latitude, widget.post.longitude));
-                      },
-                      icon: Icon(
-                        Icons.my_location,
-                        color: primaryColor.shade900,
-                      )),
-                ),
-              )
+              Row(
+                children: [
+                  ClipOval(
+                    child: Padding(
+                      padding: const EdgeInsets.all(5),
+                      child: IconButton(
+                          onPressed: () {
+                            widget.setMapLocation(latLng.LatLng(
+                                widget.post.latitude, widget.post.longitude));
+                          },
+                          icon: Icon(
+                            Icons.my_location,
+                            color: primaryColor.shade900,
+                          )),
+                    ),
+                  ),
+                  widget.deletePost != null ? ClipOval(
+                    child: Padding(
+                      padding: const EdgeInsets.all(5),
+                      child: IconButton(
+                          onPressed: () async {
+
+                              bool? result =  await dialogConfirmation(context, "Delete", "Are you sure you want to delete this post?");
+                              if (result == true){
+                                await widget.deletePost!(widget.post);
+                              }
+                          },
+                          icon: Icon(
+                            Icons.delete,
+                            color: Colors.red.shade800,
+                          )),
+                    ),
+                  ) : const SizedBox(),
+                ],
+              ),
             ],
           ),
           const SizedBox(

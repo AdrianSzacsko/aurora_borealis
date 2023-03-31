@@ -37,31 +37,7 @@ class ProfileNetwork with ChangeNotifier {
     return null;
   }
 
-  /*Future<dynamic> getSearch(String search) async {
-    Response response;
-
-    var dio = Dio();
-    dio.interceptors.add(CustomInterceptor());
-    dio.options.headers['content-Type'] = 'application/json';
-    dio.options.connectTimeout = const Duration(seconds: 5);
-
-    //final prefs = await SharedPreferences.getInstance();
-    //final token = prefs.getString('token') ?? '';
-    //dio.options.headers['authorization'] = "Bearer " + token;
-
-    try {
-      response = await dio.get(urlKey + 'weather/search/' + search);
-      return response;
-    }
-    on DioError catch (e) {
-
-      return e.response;
-    }
-
-    return null;
-  }*/
-
-  /*Future<dynamic> getProfilePic(int id) async {
+  Future<dynamic> getSearch(String search) async {
     Response response;
 
     var dio = Dio();
@@ -74,7 +50,7 @@ class ProfileNetwork with ChangeNotifier {
     dio.options.headers['authorization'] = "Bearer " + token;
 
     try {
-      response = await dio.get(urlKey + 'profile/profile_pic/' + id.toString());
+      response = await dio.get(urlKey + 'profile/search/' + search);
       return response;
     }
     on DioError catch (e) {
@@ -83,7 +59,7 @@ class ProfileNetwork with ChangeNotifier {
     }
 
     return null;
-  }*/
+  }
 
   Future<dynamic> putProfilePic(XFile? image) async {
     final String? mimeType = mime(image!.path);

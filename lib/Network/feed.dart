@@ -41,6 +41,30 @@ class FeedNetwork with ChangeNotifier {
     return null;
   }
 
+  Future<dynamic> getProfileFeed(int user_id) async {
+    Response response;
+
+    var dio = Dio();
+    dio.interceptors.add(CustomInterceptor());
+    dio.options.headers['content-Type'] = 'application/json';
+    dio.options.connectTimeout = const Duration(seconds: 5);
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? '';
+    dio.options.headers['authorization'] = "Bearer " + token;
+
+    try {
+      response = await dio.get(urlKey + 'feed/profile_feed/' + user_id.toString());
+      return response;
+    }
+    on DioError catch (e) {
+
+      return e.response;
+    }
+
+    return null;
+  }
+
   Future<dynamic> newPost(double latitude, double longitude, String category, String text) async {
     Response response;
 
@@ -135,6 +159,30 @@ class FeedNetwork with ChangeNotifier {
       return response;
     } on DioError catch (e) {
       print(e);
+      return e.response;
+    }
+
+    return null;
+  }
+
+  Future<dynamic> deletePost(int id) async {
+    Response response;
+
+    var dio = Dio();
+    dio.interceptors.add(CustomInterceptor());
+    dio.options.headers['content-Type'] = 'application/json';
+    dio.options.connectTimeout = const Duration(seconds: 5);
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? '';
+    dio.options.headers['authorization'] = "Bearer " + token;
+
+    try {
+      response = await dio.delete(urlKey + 'feed/' + id.toString());
+      return response;
+    }
+    on DioError catch (e) {
+
       return e.response;
     }
 

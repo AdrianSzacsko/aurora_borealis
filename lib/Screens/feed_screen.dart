@@ -38,8 +38,8 @@ class FeedScreenState extends State<FeedScreen> {
   List<ScrollController> scrollControllers = [];
   bool _shouldScrollToNextPage = false;
   bool _shouldScrollToPrevPage = true;
-  late latLng.LatLng currentPosition;
-  late latLng.LatLng farmPosition;
+  latLng.LatLng currentPosition = latLng.LatLng(48.148598, 17.107748);
+  latLng.LatLng farmPosition = latLng.LatLng(48.148598, 17.107748);
 
 
   int user_id = 0;
@@ -228,10 +228,10 @@ class FeedScreenState extends State<FeedScreen> {
                                           },
                                           itemBuilder: (context, pagePosition) {
 
-                                            Future.delayed(Duration.zero, (){
+                                            /*Future.delayed(Duration.zero, (){
                                               //mapController.move(markers[pagePosition].point, mapController.zoom);
                                               setMapLocation(markers[pagePosition].point);
-                                            });
+                                            });*/
 
                                             return NotificationListener(
                                               onNotification: (notification) {

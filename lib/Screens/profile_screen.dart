@@ -4,6 +4,7 @@ import 'package:aurora_borealis/Components/custom_map.dart';
 import 'package:aurora_borealis/Components/custom_network_image.dart';
 import 'package:aurora_borealis/Components/oval_component.dart';
 import 'package:aurora_borealis/Network/farm.dart';
+import 'package:aurora_borealis/Network/feed.dart';
 import 'package:aurora_borealis/Network/profile.dart';
 import 'package:aurora_borealis/Network_Responses/farms.dart';
 import 'package:aurora_borealis/Screens/login_screen.dart';
@@ -14,6 +15,9 @@ import '../Components/custom_form_field.dart';
 import '../Components/ext_string.dart';
 import '../Components/marker_shape.dart';
 import '../Components/not_logged_in.dart';
+import '../Components/post_item.dart';
+import '../Network_Responses/feed.dart';
+import '../Network_Responses/post.dart';
 import '../Network_Responses/profile.dart';
 import '../key.dart';
 import 'register_screen.dart';
@@ -35,6 +39,46 @@ class ProfileScreenState extends State<ProfileScreen> {
   List<Marker> markers = [];
   int user_id = 0;
 
+  late PageController _pageController;
+  List<ScrollController> scrollControllers = [];
+  bool _shouldScrollToNextPage = false;
+  bool _shouldScrollToPrevPage = true;
+  int activePage = 1;
+  bool upFloatingButton = false;
+
+  ScrollController mainScrollController = ScrollController();
+
+  _scrollDown() async {
+    await _pageController.nextPage(
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.linear,
+    );
+  }
+
+  _scrollUp() async {
+    await _pageController.previousPage(
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.linear,
+    );
+  }
+
+  void setMapLocation(latLng.LatLng point){
+    _mapController.move(point, _mapController.zoom);
+  }
+
+  void deletePost(Post post) async {
+    await FeedNetwork().deletePost(post.id);
+    setState(() {
+
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(viewportFraction: 0.9);
+  }
+
   @override
   Widget build(BuildContext context) {
     if (ModalRoute.of(context)!.settings.arguments == null) {
@@ -42,8 +86,42 @@ class ProfileScreenState extends State<ProfileScreen> {
     } else {
       user_id = ModalRoute.of(context)!.settings.arguments as int;
 
+      mainScrollController = ScrollController()..addListener(() {
+        setState(() {
+          if (mainScrollController.positions.isNotEmpty){
+            if (mainScrollController.offset >= 400) {
+              upFloatingButton = true; // show up arrow
+            } else {
+              upFloatingButton = false; // show down arrow
+            }
+          }
+        });
+      });
+      
+      void onTilePress(int userId){
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const ProfileScreen(),
+                settings: RouteSettings(
+                    arguments: userId)));
+
+      }
+
       return Scaffold(
-        appBar: myAppBar(context),
+        appBar: myAppBarWithProfileSearch(context, onTilePress),
+        floatingActionButtonLocation: upFloatingButton == false ? FloatingActionButtonLocation.centerFloat : FloatingActionButtonLocation.startFloat,
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            if (upFloatingButton){
+              mainScrollController.animateTo(0, duration: const Duration(milliseconds: 200), curve: Curves.linear);
+            }
+            else{
+              mainScrollController.animateTo(500, duration: const Duration(milliseconds: 200), curve: Curves.linear);
+            }
+          },
+          child: upFloatingButton == false ? const Icon(Icons.arrow_downward_outlined) : const Icon(Icons.arrow_upward_outlined),
+        ),
         body: Stack(
           fit: StackFit.expand,
           children: [
@@ -76,6 +154,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                       alignment: Alignment.bottomCenter,
                       child: Container(
                           width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height * 0.6,
                           decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.7),
                               image: DecorationImage(
@@ -88,6 +167,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                                   topRight: Radius.circular(40),
                                   topLeft: Radius.circular(40))),
                           child: SingleChildScrollView(
+                            controller: mainScrollController,
                             child: Padding(
                                 padding: const EdgeInsets.only(
                                     top: 20, right: 16, left: 16),
@@ -162,14 +242,18 @@ class ProfileScreenState extends State<ProfileScreen> {
                                                   ? Row(
                                                       children: [
                                                         FilledButton(
-                                                            onPressed: () {},
+                                                            onPressed: () {
+                                                              //TODO like
+                                                            },
                                                             child: const Text(
                                                                 "Like")),
                                                         const SizedBox(
                                                           width: 20,
                                                         ),
                                                         FilledButton(
-                                                            onPressed: () {},
+                                                            onPressed: () {
+                                                              //TODO dislike
+                                                            },
                                                             child: const Text(
                                                                 "Dislike"))
                                                       ],
@@ -256,6 +340,83 @@ class ProfileScreenState extends State<ProfileScreen> {
                                             farm: profile.farms[index],
                                           );
                                         },
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width,
+                                      height: 400,
+                                      child: FutureBuilder(
+                                        future: Future.microtask(() => ProfileFeed.create(profile.id, context)),
+                                        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                                          if (snapshot.hasData){
+
+                                            ProfileFeed feedData = snapshot.data as ProfileFeed;
+                                            scrollControllers.clear();
+                                            for (int i = 0; i < feedData.posts.length; i++) {
+                                              scrollControllers.add(ScrollController());
+                                            }
+                                            if (feedData.posts.isEmpty){
+                                              return const Center(child: Icon(Icons.image_not_supported, size: 50,));
+                                            }
+
+
+
+                                            return PageView.builder(
+                                                padEnds: false,
+                                                itemCount: feedData.posts.length,
+                                                pageSnapping: true,
+                                                controller: _pageController,
+                                                scrollDirection: Axis.vertical,
+                                                onPageChanged: (page) {
+                                                  //setState(() {
+                                                  activePage = page;
+                                                  //});
+                                                },
+                                                itemBuilder: (context, pagePosition) {
+
+                                                  return NotificationListener(
+                                                    onNotification: (notification) {
+                                                      //bool isStart = false;
+                                                      if (notification is ScrollStartNotification){
+                                                        if (scrollControllers[pagePosition].position.pixels == scrollControllers[pagePosition].position.maxScrollExtent){
+                                                          _shouldScrollToNextPage = true;
+                                                          //print( _shouldScrollToNextPage);
+                                                        }
+                                                        else if (scrollControllers[pagePosition].position.pixels == 0){
+                                                          _shouldScrollToPrevPage = true;
+                                                        }
+                                                        else{
+                                                          _shouldScrollToNextPage = false;
+                                                          _shouldScrollToPrevPage = false;
+                                                        }
+                                                      }
+                                                      if (notification is OverscrollNotification) {
+                                                        if (notification.metrics.axis == Axis.vertical) {
+                                                          if (notification.dragDetails != null) {
+                                                            if (notification.dragDetails!.delta.dy < 0 && _shouldScrollToNextPage) {
+                                                              _scrollDown();
+                                                              _shouldScrollToNextPage = false;
+                                                            }
+                                                            else if (notification.dragDetails!.delta.dy > 0 && _shouldScrollToPrevPage) {
+                                                              _scrollUp();
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                      return false;
+                                                    },
+                                                    child: SingleChildScrollView(
+                                                        controller: scrollControllers[pagePosition],
+                                                        child: PostItem(post: feedData.posts[pagePosition], setMapLocation: setMapLocation, deletePost: deletePost,)
+                                                    ),
+                                                  );
+                                                });
+                                          }
+                                          else{
+                                            return const Center(child: CircularProgressIndicator(),);
+                                          }
+                                        },
+
                                       ),
                                     )
                                   ],

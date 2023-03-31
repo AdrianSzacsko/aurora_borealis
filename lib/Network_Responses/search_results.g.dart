@@ -22,3 +22,18 @@ Map<String, dynamic> _$SearchResultToJson(SearchResult instance) =>
       'lon': instance.lon,
       'importance': instance.importance,
     };
+
+ProfileSearchResult _$ProfileSearchResultFromJson(Map<String, dynamic> json) =>
+    ProfileSearchResult(
+      json['first_name'] as String,
+      json['last_name'] as String,
+      json['id'] as int,
+    );
+
+Map<String, dynamic> _$ProfileSearchResultToJson(
+        ProfileSearchResult instance) =>
+    <String, dynamic>{
+      'first_name': instance.first_name,
+      'last_name': instance.last_name,
+      'id': instance.id,
+    };
