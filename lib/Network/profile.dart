@@ -37,6 +37,33 @@ class ProfileNetwork with ChangeNotifier {
     return null;
   }
 
+  Future<dynamic> likeOrDislike(int profileId, bool status) async {
+    Response response;
+
+    var dio = Dio();
+    dio.interceptors.add(CustomInterceptor());
+    dio.options.headers['content-Type'] = 'application/json';
+    dio.options.connectTimeout = const Duration(seconds: 5);
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? '';
+    dio.options.headers['authorization'] = "Bearer " + token;
+
+    try {
+      response = await dio.put(urlKey + 'profile/like_dislike', data: {
+        'profile_id': profileId,
+        'interaction': status
+      });
+      return response;
+    }
+    on DioError catch (e) {
+
+      return e.response;
+    }
+
+    return null;
+  }
+
   Future<dynamic> getSearch(String search) async {
     Response response;
 

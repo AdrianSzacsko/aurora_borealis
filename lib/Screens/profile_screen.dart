@@ -27,8 +27,16 @@ import 'package:latlong2/latlong.dart' as latLng;
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 
+
+
+/*
+navigator variable is the own profile ID
+showProfileID is the ID of the profile to show
+ */
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+  const ProfileScreen({Key? key, required this.showProfileId}) : super(key: key);
+  final int? showProfileId;
+
 
   @override
   ProfileScreenState createState() => ProfileScreenState();
@@ -38,7 +46,6 @@ class ProfileScreenState extends State<ProfileScreen> {
   final _mapController = MapController();
   List<Marker> markers = [];
   int user_id = 0;
-
   late PageController _pageController;
   List<ScrollController> scrollControllers = [];
   bool _shouldScrollToNextPage = false;
@@ -79,17 +86,30 @@ class ProfileScreenState extends State<ProfileScreen> {
     _pageController = PageController(viewportFraction: 0.9);
   }
 
+  void onTilePress(int userId) async {
+    await Future.delayed(const Duration(milliseconds: 50));
+    //TODO Fix this
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ProfileScreen(showProfileId: userId,),
+            settings: RouteSettings(
+                arguments: user_id)));
+
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (ModalRoute.of(context)!.settings.arguments == null) {
+    if (ModalRoute.of(context)!.settings.arguments == null || widget.showProfileId == null) {
       return const NotLoggedInScreen();
     } else {
+
       user_id = ModalRoute.of(context)!.settings.arguments as int;
 
       mainScrollController = ScrollController()..addListener(() {
         setState(() {
           if (mainScrollController.positions.isNotEmpty){
-            if (mainScrollController.offset >= 400) {
+            if (mainScrollController.offset >= 300) {
               upFloatingButton = true; // show up arrow
             } else {
               upFloatingButton = false; // show down arrow
@@ -97,17 +117,6 @@ class ProfileScreenState extends State<ProfileScreen> {
           }
         });
       });
-      
-      void onTilePress(int userId){
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const ProfileScreen(),
-                settings: RouteSettings(
-                    arguments: userId)));
-
-      }
-
       return Scaffold(
         appBar: myAppBarWithProfileSearch(context, onTilePress),
         floatingActionButtonLocation: upFloatingButton == false ? FloatingActionButtonLocation.centerFloat : FloatingActionButtonLocation.startFloat,
@@ -137,7 +146,7 @@ class ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             FutureBuilder(
-                future: Profile.create(user_id, context),
+                future: Profile.create(widget.showProfileId!, context),
                 builder:
                     (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                   if (snapshot.hasData) {
@@ -239,25 +248,15 @@ class ProfileScreenState extends State<ProfileScreen> {
                                                 height: 10,
                                               ),
                                               !myProfile
-                                                  ? Row(
-                                                      children: [
-                                                        FilledButton(
-                                                            onPressed: () {
-                                                              //TODO like
-                                                            },
-                                                            child: const Text(
-                                                                "Like")),
-                                                        const SizedBox(
-                                                          width: 20,
-                                                        ),
-                                                        FilledButton(
-                                                            onPressed: () {
-                                                              //TODO dislike
-                                                            },
-                                                            child: const Text(
-                                                                "Dislike"))
-                                                      ],
-                                                    )
+                                                  ? FilledButton(
+                                                  onPressed: () async {
+                                                    await Profile.likeOrDislike(profile.id, !profile.interaction, context);
+                                                    setState(() {
+
+                                                    });
+                                                  },
+                                                  child: profile.interaction == true ? const Text(
+                                                      "Unfollow") : const Text("Follow"))
                                                   : const SizedBox(),
                                             ],
                                           ),
@@ -272,9 +271,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                                           MainAxisAlignment.spaceAround,
                                       children: [
                                         counter(profile.post_count, "Posts"),
-                                        counter(profile.like_count, "Likes"),
-                                        counter(
-                                            profile.dislike_count, "Dislikes"),
+                                        counter(profile.like_count, "Follows"),
                                       ],
                                     ),
                                     Divider(
@@ -287,10 +284,10 @@ class ProfileScreenState extends State<ProfileScreen> {
                                           padding: const EdgeInsets.all(0),
                                           child: Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.spaceAround,
+                                                myProfile ? MainAxisAlignment.spaceAround : MainAxisAlignment.center,
                                             children: [
                                               Text(
-                                                "FARMS ",
+                                                "FARMS",
                                                 style: TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                     fontSize: 17,
@@ -356,10 +353,17 @@ class ProfileScreenState extends State<ProfileScreen> {
                                               scrollControllers.add(ScrollController());
                                             }
                                             if (feedData.posts.isEmpty){
-                                              return const Center(child: Icon(Icons.image_not_supported, size: 50,));
+                                              return Center(
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: const [
+                                                      Icon(Icons.image_not_supported, size: 50,),
+                                                      SizedBox(height: 10,),
+                                                      Text("There are no available posts", style: TextStyle(fontSize: 22),)
+                                                    ],
+                                                  ),
+                                              );
                                             }
-
-
 
                                             return PageView.builder(
                                                 padEnds: false,

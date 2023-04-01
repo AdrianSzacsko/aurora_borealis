@@ -212,6 +212,19 @@ class FeedScreenState extends State<FeedScreen> {
                                         scrollControllers.add(ScrollController());
                                       }
 
+                                      if (feedData.posts.isEmpty){
+                                        return Center(
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: const [
+                                              Icon(Icons.image_not_supported, size: 50,),
+                                              SizedBox(height: 10,),
+                                              Text("There are no available posts", style: TextStyle(fontSize: 22),)
+                                            ],
+                                          ),
+                                        );
+                                      }
+
                                       generateMarkers(feedData.posts);
 
                                       //return Text(data.currentWeather.weather_main);

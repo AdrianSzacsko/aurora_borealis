@@ -117,7 +117,7 @@ class MenuScreenState extends State<MenuScreen> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const ProfileScreen(),
+                                    builder: (context) => ProfileScreen(showProfileId: cache.getInt("user_id"),),
                                     settings: RouteSettings(
                                         arguments: cache.getInt("user_id"))))
                           }),

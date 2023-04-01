@@ -1,5 +1,6 @@
 import 'package:aurora_borealis/Network/profile.dart';
 import 'package:aurora_borealis/Network_Responses/farms.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 import '../Components/snackbar.dart';
@@ -13,9 +14,8 @@ class Profile{
   late String last_name;
   late int post_count;
   late int like_count;
-  late int dislike_count;
   late List<Farms> farms;
-  late bool is_like;
+  late bool interaction;
   late String picture_path;
 
   Profile._create(this.id){
@@ -59,17 +59,41 @@ class Profile{
     last_name = json['last_name'];
     post_count = json['post_count'];
     like_count = json['like_count'];
-    dislike_count = json['dislike_count'];
     if (json['farms'] != null){
       for (int i = 0; i < json['farms'].length; i++){
         farms.add(Farms.fromJson(json['farms'][i]));
       }
     }
-    if (json['is_like'] != null){
-      is_like = json['is_like'];
+    if (json['interaction'] != null){
+      interaction = json['interaction'];
+    }
+    else{
+      interaction = false;
     }
     if (json['picture_path'] != null){
       picture_path = json['picture_path'];
+    }
+  }
+
+  static likeOrDislike(int profileId, bool status, BuildContext context) async {
+    Response? response = await ProfileNetwork().likeOrDislike(profileId, status);
+
+    if (response == null){
+      errorResponseBar("Connection Error", context);
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context){
+        return const MenuScreen();
+      }));
+      return;
+    }
+
+    if (response.statusCode == 200){
+      //everything is good
+
+      /*Navigator.push(context, MaterialPageRoute(builder: (context) => const MenuScreen(),
+          settings: RouteSettings(arguments: shared.getInt('user_id'))));*/
+    }
+    else {
+      errorResponseBar("Something went wrong", context);
     }
   }
 }
