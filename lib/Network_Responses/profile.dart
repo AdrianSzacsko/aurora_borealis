@@ -96,5 +96,25 @@ class Profile{
       errorResponseBar("Something went wrong", context);
     }
   }
+
+  static Future<void> deleteAccount(context) async {
+    Response? response = await ProfileNetwork().deleteAccount();
+
+    if (response == null){
+      errorResponseBar("Connection Error", context);
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context){
+        return const MenuScreen();
+      }));
+      return;
+    }
+
+    if (response.statusCode == 200){
+      successResponseBar("Account deleted successfully", context);
+      return;
+    }
+    else {
+      errorResponseBar("Something went wrong", context);
+    }
+  }
 }
 

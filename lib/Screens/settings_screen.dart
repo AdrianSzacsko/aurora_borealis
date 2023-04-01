@@ -1,11 +1,15 @@
 import 'package:aurora_borealis/Components/custom_map.dart';
+import 'package:aurora_borealis/Network/profile.dart';
 import 'package:aurora_borealis/Screens/menu_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Components/custom_form_field.dart';
 import '../Components/ext_string.dart';
+import '../Components/not_logged_in.dart';
 import '../Network_Responses/auth.dart';
+import '../Network_Responses/profile.dart';
 import '../Network_Responses/settings.dart';
 import 'register_screen.dart';
 import '../Components/app_bar.dart';
@@ -30,6 +34,10 @@ class SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (ModalRoute.of(context)!.settings.arguments == null) {
+      return const NotLoggedInScreen();
+    }
+
     return Scaffold(
       appBar: myAppBar(context),
       body: Stack(
@@ -93,8 +101,17 @@ class SettingsScreenState extends State<SettingsScreen> {
                         children: [
                           Expanded(
                               child: FilledButton(
-                              onPressed: (){
-                              },
+                                  onPressed: () async {
+                                    bool? result = await dialogConfirmation(
+                                        context, "Delete Account", "Are you sure you want to delete account?");
+                                    if (result == true) {
+                                      SharedPreferences cache = await SharedPreferences.getInstance();
+                                      await Profile.deleteAccount(context);
+                                      await cache.remove("user_id");
+                                      await cache.remove("token");
+                                      SystemNavigator.pop();
+                                    }
+                                  },
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: const [
@@ -106,8 +123,22 @@ class SettingsScreenState extends State<SettingsScreen> {
                           )),
                           SizedBox(width: MediaQuery.of(context).size.width * 0.03,),
                           Expanded(child: FilledButton(
-                              onPressed: (){
-
+                              onPressed: () async {
+                                bool? result = await dialogConfirmation(
+                                    context, "Log Out", "Are you sure you want to Log Out?");
+                                if (result == true) {
+                                  SharedPreferences cache = await SharedPreferences.getInstance();
+                                  await cache.remove("user_id");
+                                  await cache.remove("token");
+                                  Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context){
+                                    return const MenuScreen();
+                                  }), (r){
+                                    return false;
+                                  });
+                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context){
+                                    return const MenuScreen();
+                                  }));
+                                }
                               },
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,

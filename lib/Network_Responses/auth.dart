@@ -29,6 +29,9 @@ class Auth {
       /*Navigator.push(context, MaterialPageRoute(builder: (context) => const MenuScreen(),
           settings: RouteSettings(arguments: shared.getInt('user_id'))));*/
     }
+    else if (response.statusCode == 403){
+      errorResponseBar("Bad Log In credentials", context);
+    }
     else {
       errorResponseBar("Something went wrong", context);
     }

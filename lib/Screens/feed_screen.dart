@@ -143,8 +143,9 @@ class FeedScreenState extends State<FeedScreen> {
 
             if (farmsList.farms.isEmpty){
               //TODO error handling
-              errorResponseBar("Please create a Farm", context);
-              Navigator.pop(context);
+              Future.delayed(Duration.zero, (){
+                errorResponseBar("Please create a Farm", context);
+              });
             }
 
             generateFarmMarkers(farmsList.farms);

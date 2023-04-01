@@ -129,6 +129,8 @@ class MenuScreenState extends State<MenuScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => const SettingsScreen(),
+                              settings: RouteSettings(
+                              arguments: cache.getInt("user_id"))
                           ))),
                 ],
               ),
