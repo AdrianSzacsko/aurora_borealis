@@ -9,8 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:readmore/readmore.dart';
 import 'package:latlong2/latlong.dart' as latLng;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../Network/feed.dart';
 import '../Network_Responses/farms.dart';
+import '../Screens/profile_screen.dart';
 import 'app_bar.dart';
 import 'custom_network_image.dart';
 import 'oval_component.dart';
@@ -38,43 +40,54 @@ class _PostItemState extends State<PostItem> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  CustomNetworkImage(
-                    reload: false,
-                    url: urlKey +
-                        'profile/profile_pic/' +
-                        widget.post.user_id.toString(),
-                    radius: 25,
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.post.first_name + " " + widget.post.last_name,
-                        style: const TextStyle(
-                          fontSize: 18,
+              InkWell(
+                onTap: () async {
+                  var cache = await SharedPreferences.getInstance();
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ProfileScreen(showProfileId: widget.post.user_id,),
+                          settings: RouteSettings(
+                              arguments: cache.getInt('user_id'))));
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    CustomNetworkImage(
+                      reload: false,
+                      url: urlKey +
+                          'profile/profile_pic/' +
+                          widget.post.user_id.toString(),
+                      radius: 25,
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.post.first_name + " " + widget.post.last_name,
+                          style: const TextStyle(
+                            fontSize: 18,
+                          ),
                         ),
-                      ),
-                      Text(
-                        widget.post.date.year.toString() +
-                            "." +
-                            widget.post.date.month.toString() +
-                            "." +
-                            widget.post.date.day.toString(),
-                        style: const TextStyle(
-                          fontSize: 11,
-                          color: Colors.grey,
-                        ),
-                      )
-                    ],
-                  ),
-                ],
+                        Text(
+                          widget.post.date.year.toString() +
+                              "." +
+                              widget.post.date.month.toString() +
+                              "." +
+                              widget.post.date.day.toString(),
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: Colors.grey,
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
+                ),
               ),
               Row(
                 children: [
