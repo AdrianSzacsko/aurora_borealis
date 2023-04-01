@@ -1,5 +1,6 @@
 import 'package:aurora_borealis/Components/oval_component.dart';
 import 'package:aurora_borealis/Screens/feed_screen.dart';
+import 'package:aurora_borealis/Screens/settings_screen.dart';
 import 'package:aurora_borealis/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -127,7 +128,7 @@ class MenuScreenState extends State<MenuScreen> {
                       () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const LoginScreen(),
+                            builder: (context) => const SettingsScreen(),
                           ))),
                 ],
               ),
