@@ -3,6 +3,7 @@ import 'package:aurora_borealis/Network/settings.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Components/snackbar.dart';
 import '../Screens/menu_screen.dart';
@@ -62,6 +63,48 @@ class Settings{
     }
     else {
       errorResponseBar("Something went wrong", context);
+    }
+  }
+
+  static Future<void> logout(context) async {
+    Response? response = await SettingsNetwork().logout();
+
+    if (response == null){
+      errorResponseBar("Connection Error", context);
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context){
+        return const MenuScreen();
+      }));
+      return;
+    }
+
+    if (response.statusCode == 200){
+      SharedPreferences cache = await SharedPreferences.getInstance();
+      await cache.remove("user_id");
+      await cache.remove("token");
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context){
+        return const MenuScreen();
+      }), (r){
+        return false;
+      });
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context){
+        return const MenuScreen();
+      }));
+      return;
+    }
+    else {
+      errorResponseBar("Something went wrong", context);
+    }
+  }
+
+  static Future<void> setFCM(String fcmToken) async {
+    Response? response = await SettingsNetwork().setFCM(fcmToken);
+
+    if (response == null){
+      return;
+    }
+
+    if (response.statusCode == 200){
+      return;
     }
   }
 

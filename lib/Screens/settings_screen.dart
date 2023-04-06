@@ -18,6 +18,7 @@ import 'package:aurora_borealis/Network/auth.dart';
 import 'package:latlong2/latlong.dart' as latLng;
 import 'package:geolocator/geolocator.dart';
 
+
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
 
@@ -127,7 +128,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                                 bool? result = await dialogConfirmation(
                                     context, "Log Out", "Are you sure you want to Log Out?");
                                 if (result == true) {
-                                  SharedPreferences cache = await SharedPreferences.getInstance();
+                                  /*SharedPreferences cache = await SharedPreferences.getInstance();
                                   await cache.remove("user_id");
                                   await cache.remove("token");
                                   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context){
@@ -137,7 +138,8 @@ class SettingsScreenState extends State<SettingsScreen> {
                                   });
                                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context){
                                     return const MenuScreen();
-                                  }));
+                                  }));*/
+                                  await Settings.logout(context);
                                 }
                               },
                               child: Row(

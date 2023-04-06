@@ -64,4 +64,52 @@ class SettingsNetwork with ChangeNotifier {
     return null;
   }
 
+  Future<dynamic> setFCM(String fcmToken) async {
+    Response response;
+
+    var dio = Dio();
+    dio.interceptors.add(CustomInterceptor());
+    dio.options.headers['content-Type'] = 'application/json';
+    dio.options.connectTimeout = const Duration(seconds: 5);
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? '';
+    dio.options.headers['authorization'] = "Bearer " + token;
+    try {
+      response = await dio.put(urlKey + 'settings/fcm_token', data: {
+        'fcm_token': fcmToken,
+      });
+      return response;
+    }
+    on DioError catch (e) {
+
+      return e.response;
+    }
+
+    return null;
+  }
+
+  Future<dynamic> logout() async {
+    Response response;
+
+    var dio = Dio();
+    dio.interceptors.add(CustomInterceptor());
+    dio.options.headers['content-Type'] = 'application/json';
+    dio.options.connectTimeout = const Duration(seconds: 5);
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? '';
+    dio.options.headers['authorization'] = "Bearer " + token;
+    try {
+      response = await dio.put(urlKey + 'settings/logout');
+      return response;
+    }
+    on DioError catch (e) {
+
+      return e.response;
+    }
+
+    return null;
+  }
+
 }

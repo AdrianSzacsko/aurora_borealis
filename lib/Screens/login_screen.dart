@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../Components/custom_form_field.dart';
 import '../Components/ext_string.dart';
 import '../Network_Responses/auth.dart';
+import '../Network_Responses/settings.dart';
 import 'register_screen.dart';
 import '../Components/app_bar.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -111,6 +112,10 @@ class LoginScreenState extends State<LoginScreen> {
                                   isLoading = true;
                                 });
                                 await Auth.login(emailController.text, passwordController.text, context);
+                                SharedPreferences cache = await SharedPreferences.getInstance();
+                                if (cache.containsKey('fcm_token')){
+                                  await Settings.setFCM(cache.getString('fcm_token')!);
+                                }
                                 setState(() {
                                   isLoading = false;
                                 });

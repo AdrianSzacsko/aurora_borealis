@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Network/push_notification.dart';
 import 'Screens/login_screen.dart';
@@ -48,16 +49,16 @@ class _MyAppState extends State<MyApp> {
     final pushNotificationService = PushNotificationService(_firebaseMessaging);
     pushNotificationService.initialise();
 
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
+    return OverlaySupport.global(child: MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
           useMaterial3: true,
-            colorSchemeSeed: primaryColor,
-            fontFamily: "Roboto",
-            textTheme: GoogleFonts.robotoTextTheme(
-              Theme.of(context).textTheme,)
-        ),
-        home: const MenuScreen(),
-      );
+          colorSchemeSeed: primaryColor,
+          fontFamily: "Roboto",
+          textTheme: GoogleFonts.robotoTextTheme(
+            Theme.of(context).textTheme,)
+      ),
+      home: const MenuScreen(),
+    ));
   }
 }
