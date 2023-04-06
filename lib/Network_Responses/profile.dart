@@ -8,15 +8,15 @@ import '../Screens/menu_screen.dart';
 
 
 class Profile{
-  late bool init;
+  bool init = false;
   final int id;
-  late String first_name;
-  late String last_name;
-  late int post_count;
-  late int like_count;
-  late List<Farms> farms;
-  late bool interaction;
-  late String picture_path;
+  String first_name = "";
+  String last_name = "";
+  int post_count = 0;
+  int like_count = 0;
+  List<Farms> farms = [];
+  bool interaction = false;
+  String picture_path = "";
 
   Profile._create(this.id){
     farms = [];

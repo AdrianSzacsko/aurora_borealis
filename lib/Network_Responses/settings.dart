@@ -11,8 +11,8 @@ part 'settings.g.dart';
 
 @JsonSerializable()
 class Settings{
-  late bool weather_notifications;
-  late bool news_notifications;
+  bool weather_notifications = false;
+  bool news_notifications = false;
 
 
   Settings(this.weather_notifications, this.news_notifications);

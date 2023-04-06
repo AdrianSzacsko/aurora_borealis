@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "885649950836",
+    "project_id": "aurora-borealis-d8550",
+    "storage_bucket": "aurora-borealis-d8550.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:885649950836:android:faa97c6a101571f38f2921",
+        "android_client_info": {
+          "package_name": "com.example.aurora_borealis"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "885649950836-426p4u7hmn4niueadt91ragho0ssk6gs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD78-4PyI6g0035j5Yk3Dlj_exfZOjewqA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "885649950836-426p4u7hmn4niueadt91ragho0ssk6gs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

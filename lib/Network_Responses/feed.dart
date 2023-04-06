@@ -14,7 +14,7 @@ class Feed{
   final double latitude;
   final double longitude;
   final int distance;
-  late List<Post> posts;
+  List<Post> posts = [];
 
   Feed._create(this.latitude, this.longitude, this.distance){
     posts = [];

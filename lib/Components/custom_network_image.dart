@@ -18,6 +18,14 @@ class CustomNetworkImage extends StatelessWidget{
         future: SharedPreferences.getInstance(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
+            SharedPreferences data = snapshot.data;
+            if (data.containsKey('token') == false){
+              return CircleAvatar(
+                child: const Icon(Icons.account_circle),
+                radius: radius / 2,
+              );
+            }
+
             return CircleAvatar(
               child: ClipOval(
                 child: Image.network(
