@@ -81,6 +81,7 @@ class MenuScreenState extends State<MenuScreen> {
                   menuTileSignInUp(
                       context,
                       'Sign In',
+                      Icons.login,
                       () => {
                             Navigator.push(
                                 context,
@@ -90,6 +91,7 @@ class MenuScreenState extends State<MenuScreen> {
                   menuTileSignInUp(
                       context,
                       "Sign Up",
+                      Icons.person_add,
                       () => Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -97,6 +99,7 @@ class MenuScreenState extends State<MenuScreen> {
                   menuTile(
                       context,
                       "Weather",
+                      Icons.cloud,
                       () => Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -105,6 +108,7 @@ class MenuScreenState extends State<MenuScreen> {
                   menuTile(
                       context,
                       "Feed",
+                      Icons.feed,
                       () => Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -114,24 +118,28 @@ class MenuScreenState extends State<MenuScreen> {
                   menuTile(
                       context,
                       "Profile",
+                      Icons.account_circle,
                       () => {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => ProfileScreen(showProfileId: cache.getInt("user_id"),),
+                                    builder: (context) => ProfileScreen(
+                                          showProfileId:
+                                              cache.getInt("user_id"),
+                                        ),
                                     settings: RouteSettings(
                                         arguments: cache.getInt("user_id"))))
                           }),
                   menuTile(
                       context,
                       "Settings",
+                      Icons.settings,
                       () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const SettingsScreen(),
+                              builder: (context) => const SettingsScreen(),
                               settings: RouteSettings(
-                              arguments: cache.getInt("user_id"))
-                          ))),
+                                  arguments: cache.getInt("user_id"))))),
                 ],
               ),
             ),
@@ -139,14 +147,32 @@ class MenuScreenState extends State<MenuScreen> {
     );
   }
 
-  Widget menuTile(BuildContext context, String text, Function newScreen) {
+  Widget menuTile(
+      BuildContext context, String text, IconData icon, Function newScreen) {
     return CustomContainer(
-      child: Text(
-        text,
-        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            child: Container(
+              alignment: Alignment.centerRight,
+              child: Icon(
+                icon,
+                color: primaryColor.shade900,
+              ),
+            ),
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          Expanded(child: Container(alignment: Alignment.centerLeft, child: Text(
+            text,
+            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
               fontWeight: FontWeight.w600,
               color: Theme.of(context).colorScheme.primary,
             ),
+          ),))
+        ],
       ),
       onTap: () {
         newScreen();
@@ -157,16 +183,39 @@ class MenuScreenState extends State<MenuScreen> {
   }
 
   Widget menuTileSignInUp(
-      BuildContext context, String text, Function newScreen) {
+      BuildContext context, String text, IconData icon, Function newScreen) {
     return CustomContainer(
-      child: Text(
-        text,
-        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-              fontWeight: FontWeight.w600,
-              color: isLoggedIn == false
-                  ? Theme.of(context).colorScheme.primary
-                  : Colors.grey,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            child: Container(
+              alignment: Alignment.centerRight,
+              child: Icon(
+                icon,
+                color: isLoggedIn == false
+                    ? Theme.of(context).colorScheme.primary
+                    : Colors.grey,
+              ),
             ),
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          Expanded(
+              child: Container(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              text,
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: isLoggedIn == false
+                        ? Theme.of(context).colorScheme.primary
+                        : Colors.grey,
+                  ),
+            ),
+          ))
+        ],
       ),
       onTap: () {
         isLoggedIn == false

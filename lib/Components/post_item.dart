@@ -33,7 +33,7 @@ class _PostItemState extends State<PostItem> {
   Widget build(BuildContext context) {
     return CustomContainer(
         child: Padding(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(9),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

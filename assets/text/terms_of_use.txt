@@ -1,0 +1,30 @@
+Welcome to Aurora Borealis! These Terms of Use govern your access and use of the Aurora Borealis mobile application (“App”). By using the App, you agree to comply with and be bound by these Terms of Use. If you do not agree to these Terms of Use, please do not use the App.
+
+1. Personal Information Collection
+The App collects personal information such as your name, email address, and password. We collect this information to provide you with access to the App and its features. By using the App, you consent to our collection, use, and storage of your personal information as described in our Privacy Policy.
+
+2. Push Notifications
+The App implements push notifications to keep you updated on new features and updates. By using the App, you agree to receive push notifications from us. You can disable push notifications in your device settings.
+
+3. No Ads
+The App does not contain any ads.
+
+4. Local Storage Data, Session Data, Geolocation, and Photo Gallery
+The App uses local storage data, session data, geolocation, and photo gallery to provide you with its features. By using the App, you agree to our collection and use of this data.
+
+5. Disclaimer of Warranties
+The App is provided “as is” without warranty of any kind, either express or implied, including but not limited to, the implied warranties of merchantability, fitness for a particular purpose, or non-infringement. Aurora Borealis does not warrant that the App will be uninterrupted or error-free.
+
+6. Limitation of Liability
+Aurora Borealis shall not be liable for any direct, indirect, incidental, special, or consequential damages arising out of or in any way connected with the use of the App or its features, whether based on contract, tort, strict liability, or otherwise, even if Aurora Borealis has been advised of the possibility of such damages.
+
+7. Governing Law
+These Terms of Use shall be governed by and construed in accordance with the laws of Slovakia, without giving effect to its conflicts of law provisions.
+
+8. Changes to Terms of Use
+Aurora Borealis reserves the right to change these Terms of Use at any time without notice. By continuing to use the App, you agree to be bound by the updated Terms of Use.
+
+9. Contact Us
+If you have any questions or comments about these Terms of Use, please contact us at [insert contact information].
+
+By using Aurora Borealis, you agree to these Terms of Use. Thank you for using Aurora Borealis!

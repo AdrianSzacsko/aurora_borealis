@@ -12,6 +12,18 @@ import 'package:latlong2/latlong.dart' as LatLng;
 AppBar myAppBar(BuildContext context) {
   return AppBar(
     backgroundColor: primaryColor,
+    title: Center(
+        child: Row(
+          children: [
+            Image.asset("assets/images/logo.png", fit: BoxFit.contain, height: 70,),
+            Text("Aurora Borealis",
+            style: TextStyle(
+              color:Colors.green.shade900,
+            ),
+            )
+          ],
+        )
+    ),
     //leading: const Icon(Icons.menu),
     leading: GestureDetector(
       onTap: () async {
@@ -45,63 +57,6 @@ AppBar myAppBar(BuildContext context) {
     ],
   );
 }
-
-/*AppBar myAppBarWithDropdown(BuildContext context, FarmsList farmsList, Function(Farms farm) function) {
-
-  Farms dropdownValue = farmsList.farms.first;
-
-  return AppBar(
-    backgroundColor: primaryColor,
-    //leading: const Icon(Icons.menu),
-    leading: GestureDetector(
-      onTap: () async {
-        if (Navigator.of(context).canPop()) {
-          Navigator.of(context).pop();
-        } else {
-          bool? result = await dialogConfirmation(
-              context, "Exit", "Are you sure you want to exit?");
-          if (result == true) {
-            SharedPreferences prefs = await SharedPreferences.getInstance();
-            await prefs.clear();
-            SystemNavigator.pop();
-          }
-        }
-      },
-      child: const Icon(
-        Icons.arrow_back_outlined, // add custom icons also
-      ),
-    ),
-    title: Center(
-      //padding: const EdgeInsets.only(left: 30),
-      child: DropdownButton(
-        items: farmsList.farms.map<DropdownMenuItem<Farms>>((Farms value) {
-          return DropdownMenuItem<Farms>(
-            value: value,
-            child: Text(value.name),
-          );
-        }).toList(),
-        onChanged: (Farms? value) {
-          // This is called when the user selects an item.
-          function(value!);
-          dropdownValue = value;
-        },
-        value: dropdownValue,
-      )
-    ),
-    actions: [
-      Padding(
-          padding: const EdgeInsets.only(right: 20.0),
-          child: GestureDetector(
-            onTap: () async {
-              SharedPreferences shared = await SharedPreferences.getInstance();
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const MenuScreen(),
-                  settings: RouteSettings(arguments: shared.getInt('user_id'))));
-            },
-            child: const Icon(Icons.menu),
-          )),
-    ],
-  );
-}*/
 
 class MyAppBarWithDropdown extends StatefulWidget implements PreferredSizeWidget{
   const MyAppBarWithDropdown({

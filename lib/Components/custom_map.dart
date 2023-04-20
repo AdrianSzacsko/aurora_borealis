@@ -82,6 +82,17 @@ class CustomMapState extends State<CustomMap>{
           ),
           widget.markerLayer == null ? Container() : widget.markerLayer!,
           CurrentLocationLayer(),
+          /*Positioned(
+            top: 5,
+            right: 5,
+            child: FloatingActionButton(
+              onPressed: _goToCurrentLocation,
+              child: const Icon(Icons.my_location),
+            ),
+          ),*/
+        ],
+
+        nonRotatedChildren: [
           SizedBox(
             width: double.infinity,
             child: Padding(
@@ -114,17 +125,7 @@ class CustomMapState extends State<CustomMap>{
               ),
             ),
           )
-          /*Positioned(
-            top: 5,
-            right: 5,
-            child: FloatingActionButton(
-              onPressed: _goToCurrentLocation,
-              child: const Icon(Icons.my_location),
-            ),
-          ),*/
         ],
-
-        nonRotatedChildren: [],
       ),
     );
   }

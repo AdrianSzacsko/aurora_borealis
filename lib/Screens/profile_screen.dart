@@ -330,8 +330,8 @@ class ProfileScreenState extends State<ProfileScreen> {
                                         itemCount: profile.farms.length,
                                         itemBuilder: (context, index) {
                                           return FarmListTile(
-                                            onPressed: (Farms farm) {
-                                              FarmNetwork().deleteFarm(farm.id);
+                                            onPressed: (Farms farm) async {
+                                              await FarmNetwork().deleteFarm(farm.id);
                                               setState(() {});
                                             },
                                             farm: profile.farms[index],

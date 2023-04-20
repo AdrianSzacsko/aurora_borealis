@@ -80,7 +80,7 @@ class FeedScreenState extends State<FeedScreen> {
     super.initState();
     _getCurrentLocation();
     //currentPosition is always set
-    _pageController = PageController(viewportFraction: 0.9);
+    _pageController = PageController(viewportFraction: 0.925);
   }
 
   void addMarker(latLng.LatLng point) {

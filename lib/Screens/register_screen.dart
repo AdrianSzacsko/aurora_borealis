@@ -1,3 +1,4 @@
+import 'package:aurora_borealis/Components/ToS.dart';
 import 'package:aurora_borealis/Network_Responses/auth.dart';
 import 'package:flutter/material.dart';
 import '../Components/custom_form_field.dart';
@@ -118,6 +119,16 @@ class RegisterScreenState extends State<RegisterScreen> {
                                   },
                                   prefixIcon: Icons.password_outlined,
                                   isPassword: true),
+                              TextButton(
+                                onPressed: () async {showToS(context);},
+                                child: const Text(
+                                  "By signing up, you are agreeing to our ToS",
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              ),
                               FilledButton(
                                 onPressed: () async {
                                   if (_formKey.currentState!.validate()) {

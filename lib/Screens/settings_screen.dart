@@ -117,7 +117,6 @@ class SettingsScreenState extends State<SettingsScreen> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: const [
                                   Icon(Icons.no_accounts_outlined),
-                                  SizedBox(width: 5,),
                                   Text("Delete Account")
                                 ],
                               )
@@ -146,7 +145,6 @@ class SettingsScreenState extends State<SettingsScreen> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: const [
                                   Icon(Icons.logout_outlined),
-                                  SizedBox(width: 5,),
                                   Text("Log Out")
                                 ],
                               )

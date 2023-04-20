@@ -9,12 +9,12 @@ import '../Screens/weather_main_screen.dart';
 import 'oval_component.dart';
 
 enum Daily{
-  DayTemp,
-  MinimumTemp,
-  MaximumTemp,
-  NightTemp,
-  EveningTemp,
-  MorningTemp,
+  Temperature_at_day,
+  Minimum_temperature,
+  Maximum_temperature,
+  Temperature_at_night,
+  Evening_temperature,
+  Morning_temperature,
   Pressure,
   Humiditiy,
   Wind,
@@ -25,8 +25,8 @@ enum Daily{
 
 enum Hourly{
   Temperature,
-  MinimumTemp,
-  MaximumTemp,
+  Minimum_temperature,
+  Maximum_temperature,
   Pressure,
   Humiditiy,
   Wind,
@@ -84,23 +84,23 @@ class _CustomChartState extends State<CustomChart> {
 
     if (weatherType == WeatherType.daily){
       switch (Daily.values.byName(choice)){
-        case Daily.MinimumTemp:
+        case Daily.Minimum_temperature:
           weatherDataListValues = weatherData.dailyWeather.asMap().map((key, value) =>
               MapEntry(key, value.temp_min)).values.toList();
           break;
-        case Daily.MaximumTemp:
+        case Daily.Maximum_temperature:
           weatherDataListValues = weatherData.dailyWeather.asMap().map((key, value) =>
               MapEntry(key, value.temp_max)).values.toList();
           break;
-        case Daily.NightTemp:
+        case Daily.Temperature_at_night:
           weatherDataListValues = weatherData.dailyWeather.asMap().map((key, value) =>
               MapEntry(key, value.temp_night)).values.toList();
           break;
-        case Daily.EveningTemp:
+        case Daily.Evening_temperature:
           weatherDataListValues = weatherData.dailyWeather.asMap().map((key, value) =>
               MapEntry(key, value.temp_eve)).values.toList();
           break;
-        case Daily.MorningTemp:
+        case Daily.Morning_temperature:
           weatherDataListValues = weatherData.dailyWeather.asMap().map((key, value) =>
               MapEntry(key, value.temp_morn)).values.toList();
           break;
@@ -128,7 +128,7 @@ class _CustomChartState extends State<CustomChart> {
           weatherDataListValues = weatherData.dailyWeather.asMap().map((key, value) =>
               MapEntry(key, value.snow)).values.toList();
           break;
-        case Daily.DayTemp:
+        case Daily.Temperature_at_day:
           weatherDataListValues = weatherData.dailyWeather.asMap().map((key, value) =>
               MapEntry(key, value.temp_day)).values.toList();
           break;
@@ -141,11 +141,11 @@ class _CustomChartState extends State<CustomChart> {
           weatherDataListValues = weatherData.hourlyWeather.asMap().map((key, value) =>
               MapEntry(key, value.main_temp)).values.toList();
           break;
-        case Hourly.MinimumTemp:
+        case Hourly.Minimum_temperature:
           weatherDataListValues = weatherData.hourlyWeather.asMap().map((key, value) =>
               MapEntry(key, value.main_temp_min)).values.toList();
           break;
-        case Hourly.MaximumTemp:
+        case Hourly.Maximum_temperature:
           weatherDataListValues = weatherData.hourlyWeather.asMap().map((key, value) =>
               MapEntry(key, value.main_temp_max)).values.toList();
           break;
@@ -208,7 +208,7 @@ class _CustomChartState extends State<CustomChart> {
                 items: weatherDataList.map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
-                    child: Text(value),
+                    child: Text(value.toString().split("_").join(" ")),
                   );
                 }).toList(),
               ),
