@@ -20,7 +20,7 @@ class AuthNetwork with ChangeNotifier {
     // dio.options.headers['Authorization'] = 'Bearer '+ token;
     // dio.options.headers['Content-Type'] = 'application/json';
     try {
-      response = await dio.post(urlRegister + apiKey, data: {
+      response = await dio.post(urlKey + "register/" + apiKey, data: {
         'email': email,
         'first_name': firstname,
         'last_name': lastname,
@@ -50,7 +50,7 @@ class AuthNetwork with ChangeNotifier {
         'username': email,
         'password': password,
       });
-      response = await dio.post(urlLogin + apiKey, data: formData);
+      response = await dio.post(urlKey + "login/" + apiKey, data: formData);
 
       if (response.statusCode == 200) {
         final prefs = await SharedPreferences.getInstance();
