@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:aurora_borealis/Network_Responses/settings.dart';
 import 'package:aurora_borealis/constants.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:overlay_support/overlay_support.dart';
@@ -11,10 +12,6 @@ class PushNotificationService {
   final FirebaseMessaging _fcm;
 
   PushNotificationService(this._fcm);
-
-  Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-    print("Handling a background message");
-  }
 
   Future initialise() async {
     /*if (Platform.isIOS) {
@@ -35,9 +32,9 @@ class PushNotificationService {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       //print("onMessage: ${message.data}");
       showSimpleNotification(
-        Text(message.data['title'] ?? 'Unknown'),
+        Text(message.notification?.title ?? 'Unknown'),
         leading: const Icon(Icons.info_outline),
-        subtitle: Text(message.data['body'] ?? 'Unknown'),
+        subtitle: Text(message.notification?.body ?? 'Unknown'),
         background: primaryColor,
         duration: const Duration(seconds: 4),
       );
@@ -59,4 +56,8 @@ class PushNotificationService {
       },
     );*/
   }
+}
+
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print("Handling a background message");
 }

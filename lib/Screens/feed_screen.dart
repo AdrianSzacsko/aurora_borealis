@@ -142,10 +142,9 @@ class FeedScreenState extends State<FeedScreen> {
             FarmsList farmsList = snapshot.data as FarmsList;
 
             if (farmsList.farms.isEmpty){
-              //TODO error handling
-              Future.delayed(Duration.zero, (){
+              /*Future.delayed(Duration.zero, (){
                 errorResponseBar("Please create a Farm", context);
-              });
+              });*/
             }
 
             generateFarmMarkers(farmsList.farms);
@@ -156,10 +155,17 @@ class FeedScreenState extends State<FeedScreen> {
               resizeToAvoidBottomInset: true,
               appBar: MyAppBarWithDropdown(farmsList: [currentPositionFarm, ...farmsList.farms], function: getChosenFarm,),
               floatingActionButton: FloatingActionButton(
+                backgroundColor: farmsList.farms.isEmpty ? Colors.grey : primaryColor,
                 onPressed: () async {
-                  await showDialog(context: context, builder: (context){
-                    return PostDialog(farmsList: farmsList.farms,);
-                  });
+                  if (farmsList.farms.isEmpty){
+                    errorResponseBar("Please create a Farm", context);
+                  }
+                  else{
+                    await showDialog(context: context, builder: (context){
+                      return PostDialog(farmsList: farmsList.farms,);
+                    });
+                  }
+
                 },
                 child: const Icon(Icons.add_rounded),
               ),
@@ -200,7 +206,7 @@ class FeedScreenState extends State<FeedScreen> {
                               child: SizedBox(
                                 width: MediaQuery.of(context).size.width,
                                 child: FutureBuilder(
-                                  future: Future.microtask(() => Feed.create(farmPosition.latitude, farmPosition.longitude, 50, context)),
+                                  future: Future.microtask(() => Feed.create(farmPosition.latitude, farmPosition.longitude, 150, context)),
                                   builder: (
                                       BuildContext context,
                                       AsyncSnapshot<dynamic> snapshot

@@ -77,7 +77,7 @@ class Settings{
       return;
     }
 
-    if (response.statusCode == 200){
+    if (response.statusCode == 200 || response.statusCode == 404){
       SharedPreferences cache = await SharedPreferences.getInstance();
       await cache.remove("user_id");
       await cache.remove("token");

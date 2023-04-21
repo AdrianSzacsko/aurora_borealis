@@ -335,6 +335,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                                               setState(() {});
                                             },
                                             farm: profile.farms[index],
+                                            myProfile: myProfile,
                                           );
                                         },
                                       ),
@@ -411,7 +412,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                                                     },
                                                     child: SingleChildScrollView(
                                                         controller: scrollControllers[pagePosition],
-                                                        child: PostItem(post: feedData.posts[pagePosition], setMapLocation: setMapLocation, deletePost: deletePost,)
+                                                        child: PostItem(post: feedData.posts[pagePosition], setMapLocation: setMapLocation, deletePost: myProfile ? deletePost : null,)
                                                     ),
                                                   );
                                                 });
@@ -472,8 +473,9 @@ class ProfileScreenState extends State<ProfileScreen> {
 class FarmListTile extends ListTile {
   final void Function(Farms farm) onPressed;
   final Farms farm;
+  final bool myProfile;
 
-  const FarmListTile({Key? key, required this.onPressed, required this.farm})
+  const FarmListTile({Key? key, required this.onPressed, required this.farm, required this.myProfile})
       : super(key: key);
 
   @override
@@ -487,11 +489,14 @@ class FarmListTile extends ListTile {
               farm.name,
               style: const TextStyle(fontSize: 16),
             ),
-            IconButton(
+            myProfile ? IconButton(
                 onPressed: () {
                   onPressed(farm);
                 },
                 icon: const Icon(Icons.delete))
+                : IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.agriculture))
           ],
         ),
         const Divider(

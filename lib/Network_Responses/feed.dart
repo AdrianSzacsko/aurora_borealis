@@ -38,7 +38,7 @@ class Feed{
     }
     else if (response.statusCode == 404){
       component.posts = [];
-      errorResponseBar("Feed is empty", context);
+      //errorResponseBar("Feed is empty", context);
     }
     else if (response.statusCode == 401){
       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context){
@@ -133,7 +133,7 @@ class ProfileFeed{
     }
     else if (response.statusCode == 404){
       component.posts = [];
-      errorResponseBar("Feed is empty", context);
+      //errorResponseBar("Feed is empty", context);
     }
     else if (response.statusCode == 401){
       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context){
