@@ -135,7 +135,7 @@ class FeedScreenState extends State<FeedScreen> {
       user_id = ModalRoute.of(context)!.settings.arguments as int;
 
       return FutureBuilder(
-        future: Future.microtask(() => FarmsList.create(context)),
+        future: Future.microtask(() => FarmsList.create(context, true)),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData){
 

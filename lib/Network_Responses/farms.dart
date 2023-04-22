@@ -26,7 +26,7 @@ class FarmsList{
 
   FarmsList._create();
 
-  static Future<FarmsList> create(context) async {
+  static Future<FarmsList> create(context, bool checkLogin) async {
     var component = FarmsList._create();
 
     var response = await FarmNetwork().getFarms();
@@ -40,11 +40,13 @@ class FarmsList{
       component.fromJson(response.data);
     }
     else if (response.statusCode == 401){
-      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context){
-        return const MenuScreen();
-      }), (r){
-        return false;
-      });
+      if (checkLogin){
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context){
+          return const MenuScreen();
+        }), (r){
+          return false;
+        });
+      }
     }
     else{
       errorResponseBar("Something went wrong", context);

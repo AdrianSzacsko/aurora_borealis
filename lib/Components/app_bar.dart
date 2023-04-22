@@ -510,7 +510,7 @@ class MySearchDelegate extends SearchDelegate<String> {
     // This is where you can display suggestions as the user types in the search query.
     // For example, you can use a ListView to display a list of suggestions.
     return FutureBuilder(
-      future: FarmsList.create(context),
+      future: FarmsList.create(context, false),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
 
         if (snapshot.hasData){
