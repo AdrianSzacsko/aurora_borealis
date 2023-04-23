@@ -92,7 +92,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    createSwitch("Weather Notifications", data, changeNotifications, SwitchType.weather),
+                    //createSwitch("Weather Notifications", data, changeNotifications, SwitchType.weather),
                     createSwitch("News Notifications", data, changeNotifications, SwitchType.news),
                     const SizedBox(height: 50,),
                     Padding(
