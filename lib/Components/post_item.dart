@@ -445,6 +445,7 @@ class _PostNewImageState extends State<PostNewImageItem> {
         FilledButton(
             onPressed: () async {
           await widget.createPost(images);
+          successResponseBar("Post created, reload feed to check it", context);
           Navigator.of(context).pop();
         },
             child: const Text("Create Post")),

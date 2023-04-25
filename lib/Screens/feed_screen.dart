@@ -161,7 +161,7 @@ class FeedScreenState extends State<FeedScreen> {
                     errorResponseBar("Please create a Farm", context);
                   }
                   else{
-                    await showDialog(context: context, builder: (context){
+                    await showDialog(context: context, barrierDismissible: false, builder: (context){
                       return PostDialog(farmsList: farmsList.farms,);
                     });
                   }

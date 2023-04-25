@@ -56,7 +56,7 @@ class RegisterScreenState extends State<RegisterScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text(
-                          'Sign Up',
+                          'Register',
                           style: TextStyle(
                               fontSize: 28
                           ),
@@ -149,7 +149,7 @@ class RegisterScreenState extends State<RegisterScreen> {
 
                                   }
                                 },
-                                child: const Text('Sign Up'),
+                                child: const Text('Register'),
                               )
                             ],
                           ),
@@ -175,7 +175,7 @@ class RegisterScreenState extends State<RegisterScreen> {
                                       )),
                                   onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()));},
                                   child: const Text(
-                                    'Sign In',
+                                    'Login',
                                     style: TextStyle(
                                         fontSize: 14
                                     ),

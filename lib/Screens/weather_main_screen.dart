@@ -345,6 +345,8 @@ class WeatherMainScreenState extends State<WeatherMainScreen> {
     return Text(
       text,
       style: TextStyle(fontSize: fontSize),
+      overflow: TextOverflow.fade,
+      softWrap: false,
     );
   }
 }

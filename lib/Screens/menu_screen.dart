@@ -80,7 +80,7 @@ class MenuScreenState extends State<MenuScreen> {
                 children: [
                   menuTileSignInUp(
                       context,
-                      'Sign In',
+                      'Login',
                       Icons.login,
                       () => {
                             Navigator.push(
@@ -90,7 +90,7 @@ class MenuScreenState extends State<MenuScreen> {
                           }),
                   menuTileSignInUp(
                       context,
-                      "Sign Up",
+                      "Register",
                       Icons.person_add,
                       () => Navigator.push(
                           context,

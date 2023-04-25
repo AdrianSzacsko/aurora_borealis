@@ -26,7 +26,7 @@ class CustomContainer extends StatelessWidget {
         splashColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
         borderRadius: BorderRadius.circular(12),
         child: SizedBox(
-height: height,
+          height: height,
           width: width,
           child: Center(child: child),
         ),
