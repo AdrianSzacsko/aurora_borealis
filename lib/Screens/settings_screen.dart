@@ -26,11 +26,6 @@ class SettingsScreen extends StatefulWidget {
   SettingsScreenState createState() => SettingsScreenState();
 }
 
-enum SwitchType {
-  weather,
-  news
-}
-
 class SettingsScreenState extends State<SettingsScreen> {
 
   @override
@@ -68,8 +63,8 @@ class SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Future<void> changeNotifications(bool weather, bool news) async {
-    await Settings.setValues(weather, news, context);
+  Future<void> changeNotifications(bool news) async {
+    await Settings.setValues(news, context);
     setState(() {
 
     });
@@ -93,7 +88,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     //createSwitch("Weather Notifications", data, changeNotifications, SwitchType.weather),
-                    createSwitch("News Notifications", data, changeNotifications, SwitchType.news),
+                    createSwitch("News Notifications", data, changeNotifications),
                     const SizedBox(height: 50,),
                     Padding(
                       padding: const EdgeInsets.all(5),
@@ -162,16 +157,8 @@ class SettingsScreenState extends State<SettingsScreen> {
   }
 
 
-  Widget createSwitch(String text, Settings data, Future<void> Function(bool weather, bool news) change, SwitchType switchType){
-    late bool switchValue;
-    switch (switchType) {
-      case SwitchType.weather:
-        switchValue = data.weather_notifications;
-        break;
-      case SwitchType.news:
-        switchValue = data.news_notifications;
-        break;
-    }
+  Widget createSwitch(String text, Settings data, Future<void> Function(bool news) change){
+    bool switchValue = data.news_notifications;
     return Padding(
       padding: const EdgeInsets.all(5),
       child: Row(
@@ -181,14 +168,7 @@ class SettingsScreenState extends State<SettingsScreen> {
           Switch(
               value: switchValue,
               onChanged: (value){
-                switch (switchType) {
-                  case SwitchType.weather:
-                    change(value, data.news_notifications);
-                    break;
-                  case SwitchType.news:
-                    change(data.weather_notifications, value);
-                    break;
-                }
+                change(value);
               }
           )
         ],

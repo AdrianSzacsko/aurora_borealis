@@ -37,7 +37,7 @@ class SettingsNetwork with ChangeNotifier {
     return null;
   }
 
-  Future<dynamic> setNotifications(bool weather, bool news) async {
+  Future<dynamic> setNotifications(bool news) async {
     Response response;
 
     var dio = Dio();
@@ -51,7 +51,6 @@ class SettingsNetwork with ChangeNotifier {
 
     try {
       response = await dio.put(urlKey + 'settings/notifications/', data: {
-        'weather_notifications': weather,
         'news_notifications': news
       });
       return response;

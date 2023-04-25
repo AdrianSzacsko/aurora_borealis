@@ -12,11 +12,10 @@ part 'settings.g.dart';
 
 @JsonSerializable()
 class Settings{
-  bool weather_notifications = false;
   bool news_notifications = false;
 
 
-  Settings(this.weather_notifications, this.news_notifications);
+  Settings(this.news_notifications);
 
   Settings._create();
 
@@ -47,8 +46,8 @@ class Settings{
     return component;
   }
 
-  static Future<void> setValues(bool weather, bool news, context) async {
-    Response? response = await SettingsNetwork().setNotifications(weather, news);
+  static Future<void> setValues(bool news, context) async {
+    Response? response = await SettingsNetwork().setNotifications(news);
 
     if (response == null){
       errorResponseBar("Connection Error", context);
